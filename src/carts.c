@@ -2,14 +2,8 @@
 ** recognize cart and set up special properties
 */
 
-
-db KoolAide;		/* do KoolAide cheat */
-db RSBoxing;		/* do RSBOXING cheat */
-dd DefaultCFirst;	/* emu recommends game start here */
-db MPdirection;		/* direction mouse must move to emulate paddle */
-db MinVol;			/* minimum volume needed to make noise on PC-speaker */
-db LG_WrapLine;		/* light gun wrap line */
-
+#include "globals.h"
+#include "carts.h"
 
 db Lookup(dd *table)
 {

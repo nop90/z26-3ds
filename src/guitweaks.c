@@ -4,6 +4,8 @@
 * lightgun wrapping ?
 */
 
+#include "globals.h"
+
 int tweaks_current = 0;	/* currently selected GUI option */
 int exit_tweaks = 0;	/* exit timing menu */
 
@@ -164,7 +166,7 @@ void tweaks_gui() {
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		
 		tweaks_current = gui_handle_action(action, &exit_tweaks, tweaks_gui_items, tweaks_current);

@@ -6,17 +6,9 @@
 
 // SDL_Surface *screen_surface;  // !!
 
-dd texture_buffer[1024*1024];
-
-
-#include "pixcopy.c"
-
-typedef struct{
-  Uint8 r;
-  Uint8 g;
-  Uint8 b;
-  Uint8 unused;
-} RGB32_Color;
+#include "pixcopy.h"
+#include "flip.h"
+#include "video.h"
 
 void ClearScreenBuffers()
 {
@@ -174,8 +166,8 @@ void srv_CopyScreen()
 	Horiz = (width - pixelspread*tiawidth) / 2;
 	if (width == 256) Horiz = (width - pixelspread*tiawidth/2) / 2;
 
-	srv_buffer = srv_screen->pixels;
-	srv_pitch = srv_screen->pitch;
+	srv_buffer = srv_screen->data; //srv_screen->pixels;
+	srv_pitch = 32; // srv_screen->pitch;
 
 	emu_pixels = ScreenBuffer;
 	emu_pixels_prev = ScreenBufferPrev;

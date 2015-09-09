@@ -2,64 +2,8 @@
 ** guiutil.c --gui utility functions
 */
 
-
-/* gui_action is an abstraction layer between SDL_Event and gui code.
-	This allows both gui() and file_selector() (and later on whatever
-	else we have) to use the same set of key/joystick bindings. See
-	gui_navigate(). If we ever allow gui key remapping, gui_navigate()
-	is where the map will be applied. */
-	
-typedef enum {
-	GUI_NO_ACTION,
-	GUI_UP,
-	GUI_DOWN,
-	GUI_PAGEUP,
-	GUI_PAGEDOWN,
-	GUI_HOME,
-	GUI_END,
-	GUI_ACTIVATE_PRI,
-	GUI_ACTIVATE_SEC,
-	GUI_RANDOM,
-	GUI_EXIT_GUI
-} gui_action;
-
-/* gui_entry is a struct that represents a GUI menu option.
-
-	label is the text, which must be less than GUI_WIDTH chars. It may
-	contain one %s, which will be replaced by the data (uses sprintf())
-
-	data is NULL for a menu item with no options (like `Resume Emulator'),
-	or else the string value of the currently-selected option (such as
-	"Yes" or "No" for e.g. `Show FPS' option). If you like, you can think
-	of an item with options as a drop-down or radio list, and an item
-	with no options as a button.
-
-	Handlers are callbacks that actually perform the menu functions.
-	They are declared to return void and accept no parameters.
-
-	Each gui_entry has one primary handler (or NULL if no handler is
-	desired) which will get called whenever the user presses (Enter,
-	space, rightarrow, joybutton0, or joystick-right) and optionally
-	a secondary handler which will get called when the user presses
-	leftarrow, joybutton1, or joystick-left. If no secondary handler
-	is desired, set sec_handler to NULL.
-
-	It is possible to define a gui_entry with a NULL primary handler and
-	an actual callable sec_handler. Please don't do this, it will only
-	make the GUI confusing and serves no useful purpose.
-
-	handlers must never assume that they're the only ones that can change
-	a value: there are still keystrokes that can change values while the
-	emulator is running (e.g. alt-enter for fullscreen/window).
-*/
-typedef struct {
-	char *label;
-	char *data;
-	int disabled;
-	void (*handler)();
-	void (*sec_handler)();
-} gui_entry;
-
+#include "globals.h"
+#include "guiutil.h"
 
 /* Utility function for use by any menu item that's a toggle */
 
@@ -77,7 +21,7 @@ void set_yesno_string(char *str, int yesno) {
 	support the mouse in the GUI, we'd only have to change this one
 	routine. */
 //gui_action gui_navigation(SDL_Event *evp) {
-gui_action gui_navigation(u32 key) {
+gui_action gui_navigation(u32 keys) {
 //	if(evp->type == SDL_QUIT) {
 //		return GUI_EXIT_GUI;
 //	}
@@ -116,69 +60,30 @@ gui_action gui_navigation(u32 key) {
 		}
 	}
 */
-//	if(evp->type == SDL_KEYDOWN) {
-		switch(key){ //evp->key.keysym.sym) {
-//			case SDLK_RETURN:
-//			case SDLK_SPACE:
-//			case SDLK_RIGHT:
-//			case SDLK_KP6:
-			case KEY_RIGHT:
-				return GUI_ACTIVATE_PRI;
 
-//			case SDLK_LEFT:
-//			case SDLK_KP4:
-			case KEY_LEFT:
-				return GUI_ACTIVATE_SEC;
-
-//			case SDLK_UP:
-//			case SDLK_KP8:
-			case KEY_UP:
-				return GUI_UP;
-
-//			case SDLK_TAB:
-//			case SDLK_DOWN:
-//			case SDLK_KP2:
-			case KEY_DOWN:
-				return GUI_DOWN;
-
-//			case SDLK_BACKSPACE:
-//			case SDLK_ESCAPE:
-			case KEY_SELECT:
-				return GUI_EXIT_GUI;
-
-//			case SDLK_PAGEUP:
-//			case SDLK_KP9:
-			case KEY_A:
-				return GUI_PAGEUP;
-
-//			case SDLK_PAGEDOWN:
-//			case SDLK_KP3:
-			case KEY_B:
-				return GUI_PAGEDOWN;
-
-//			case SDLK_HOME:
-//			case SDLK_KP7:
-			case KEY_START:
-				return GUI_HOME;
-
-//			case SDLK_END:
-//			case SDLK_KP1:
-			case KEY_X:
-				return GUI_END;
+	if (keys & KEY_RIGHT) {
+		return GUI_ACTIVATE_PRI;
+	} else if (keys & KEY_LEFT) {
+		return GUI_ACTIVATE_SEC;
+	} else if (keys & KEY_UP) {
+		return GUI_UP;
+	} else if (keys & KEY_DOWN) {
+		return GUI_DOWN;
+	} else if (keys & KEY_SELECT) {
+		return GUI_EXIT_GUI;
+	} else if (keys & KEY_A) {
+		return GUI_PAGEUP;
+	} else if (keys & KEY_B) {
+		return GUI_PAGEDOWN;
+	} else if (keys & KEY_X) {
+		return GUI_EXIT_GUI;
+	} else if (keys & KEY_START) {
+		return GUI_END;
+	} else if (keys & KEY_Y) {
+		SaveScreenshot();
+		return GUI_NO_ACTION;
+	} else return GUI_NO_ACTION;
 				
-//			case SDLK_BACKSLASH:
-//				return GUI_RANDOM;
-				
-//			case SDLK_EQUALS:
-			case KEY_Y:
-				SaveScreenshot();
-				return GUI_NO_ACTION;
-
-			default:
-				return GUI_NO_ACTION;
-		}
-//	}
-	return GUI_NO_ACTION;	/* all other events */
 }
 
 int set_gui_height(gui_entry *menu) {

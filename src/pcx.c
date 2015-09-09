@@ -2,6 +2,9 @@
 ** pcx.c -- write a screenshot, in .bmp format
 */
 
+#include "globals.h"
+
+
 void SaveScreenshot() {
 	char def_screenshot[20] = "z26_";
 	char PCXFileName[20];

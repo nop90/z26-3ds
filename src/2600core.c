@@ -4,21 +4,25 @@
 
 */
 
-void do_Instruction_line(void);
-void SetStarpath(void);
-void SetPitfallII(void);
+#include "globals.h"
+#include "2600core.h"
+#include "srv.h"
+#include "video.h"
+#include "controls.h"
+#include "sound.h"
+#include "carts.h"
 
-#include "c_trace.c"
-#include "c_riot.c"
-#include "c_tialine.c"
-#include "c_tiasnd.c"
-#include "c_soundq.c"
-#include "c_tiawrite.c"
-#include "c_cpuhand.c"
-#include "c_banks.c"
-#include "c_pitfall2.c"
-#include "c_starpath.c"
-#include "c_cpujam.c"
+#include "c_trace.h"
+#include "c_riot.h"
+#include "c_tialine.h"
+#include "c_tiasnd.h"
+#include "c_soundq.h"
+#include "c_tiawrite.h"
+#include "c_cpuhand.h"
+#include "c_banks.h"
+#include "c_pitfall2.h"
+#include "c_starpath.h"
+#include "c_cpujam.h"
 #include "c_cpu.c"
 #include "c_init.c"
 

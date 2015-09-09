@@ -28,28 +28,13 @@
 
 */
 
-dd SP_Scheme[8][2] = { /* table of bankswitch schemes */
-	{2 * 0x800,	3 * 0x800},
-	{0 * 0x800,	3 * 0x800},
-	{2 * 0x800,	0 * 0x800},
-	{0 * 0x800,	2 * 0x800},
-	{2 * 0x800,	3 * 0x800},
-	{1 * 0x800,	3 * 0x800},
-	{2 * 0x800,	1 * 0x800},
-	{1 * 0x800,	2 * 0x800}
-};
-
-dd SPSlice[2] = { 0, 3 * 0x800 };
-
-dd SP_PrevAdr = 0;
-
-/* byte(s) to write to RAM: */
-db SP_RamByte = 0;
-
-//db Starpath = 0;
-db SP_WriteEnable = 0;
-db SP_AddressCount = 7;
-
+#include <stdlib.h>
+#include "globals.h"
+#include "cli.h"
+#include "text.h"
+#include "c_trace.h"
+#include "c_banks.h"
+#include "c_starpath.h"
 
 /*
 	Starpath initialization

@@ -5,15 +5,17 @@
 #include <3ds.h>
 #include <sf2d.h>
 
+#include "globals.h"
 #include "srv.h"
+#include "flip.h"
+#include "video.h"
+#include "sound.h"
+#include "mouse.h"
 
 
 //#include "icon.c"  // needed???
 //#include "sdlopengl.c" // todo: move in video what needed
-#include "flip.c"
-#include "video.c"
-#include "sound.c"
-#include "mouse.c"
+
 
 
 //SDL_Joystick *JoystickTable[16];

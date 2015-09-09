@@ -2,12 +2,8 @@
 ** sdlsound.c -- SDL sound code
 */
 
-dd SQ_resample;	/* a counter for mixing sound to 44100 Hz */
-
-db SQ_byte;	/* byte to put in the sound queue */
-db *SQ_Input;	/* pointer to next available byte for storing */
-db *SQ_Output;	/* pointer to next available byte for fetching */
-db *SQ_Top;	/* pointer to the top of the queue */
+#include "globals.h"
+#include "sound.h"
 
 void Init_SoundQ() 
 {
@@ -47,7 +43,7 @@ void SQ_Store()
 ** the callback function
 */
 
-void fillerup(void *unused, Uint8 *stream, int len)
+void fillerup(void *unused, db *stream, int len)
 {
 	int count = SQ_Count();
 		
@@ -68,8 +64,6 @@ void fillerup(void *unused, Uint8 *stream, int len)
 		}
 	}
 }
-
-static int sound_is_on = 0;
 
 void srv_sound_on()
 {
@@ -93,9 +87,10 @@ void srv_sound_on()
 		}
 
 		SDL_PauseAudio(0);		// turn on the callback 
-		sound_is_on = 1;
-	}
 */
+		sound_is_on = 1;
+//	}
+
 }
 
 void srv_sound_off()

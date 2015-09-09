@@ -2,6 +2,9 @@
 **	z26 sound stuff
 */
 
+#include "globals.h"
+#include "kidvid.h"
+
 void QueueSoundByte() {
 	SampleByte = 0;				/* default kidvid sample */
 	if(KidVid) kv_GetNextSampleByte();	/* this routine puts byte into SampleByte */

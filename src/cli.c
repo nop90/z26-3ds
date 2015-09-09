@@ -7,8 +7,7 @@
 */
 
 #include "globals.h"
-
-#define SC_LOAD0_SAVE 515330    // where in ROM buffer to save Load 0
+#include "cli.h"
 
 void cli_LoadNextStarpath(void)
 {
@@ -87,10 +86,6 @@ void cli_ReloadStarpath(void)
 	SC_ControlByte=CartRom[0x2002];
 	}
 }
-
-
-#define CRC16_REV 0xA001		/* CRC-16 polynomial reversed */
-#define CRC32_REV 0xA0000001	/* CRC-32 polynomial reversed */
 
 /*
 	used for generating the CRC lookup table
@@ -235,10 +230,6 @@ db SCBIOS[188] = {
 	return(1);
 }
 
-
-char cli_controllers[12][3] =
-	{"JS","PC","KP","DC","LG","CM","KV","ML","ST","TB","AM","NC"};
-
 int GetController(char *p)
 {
 	int i, LocalController;
@@ -263,8 +254,6 @@ int GetController(char *p)
 /*
 	Command Line interpreter
 */
-
-FILE *zlog;
 
 void cli_InterpretParm(char *p)
 {
@@ -581,11 +570,6 @@ void cli_ReadParms(char *Filename)
 	
 //	fclose(fp);	
 }
-
-
-char FileName[260];
-char ROMLoaded = 0; char ROMSeen = 0;
-
 
 void cli_write_CRC(char *filename)
 {

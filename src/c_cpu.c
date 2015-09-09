@@ -11,11 +11,13 @@
  Please see COPYING.TXT for details.
 */
 
+#include "globals.h"
+#include "c_riot.h"
+#include "c_trace.h"
+#include "c_cpujam.h"
+
 db dummy_flag;	/* used by ROL and ROR */
 db dummy_high, dummy_low;	/* used by ADC and SBC */
-
-
-
 
 /*
 	the opcode definitions

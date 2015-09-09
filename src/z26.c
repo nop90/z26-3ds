@@ -28,20 +28,19 @@ void gui();
 
 #include <3ds.h>
 #include "globals.h"
-
 #include "srv.h"
-#include "ct.c"
-#include "carts.c"
-#include "cli.c"
-#include "kidvid.c"
-#include "palette.c"
-#include "text.c"
-#include "pcx.c"
-#include "controls.c"
-#include "position.c"
-#include "gui.c"
-#include "sound.c"
-#include "2600core.c"
+#include "controls.h"
+#include "sound.h"
+#include "ct.h"
+#include "carts.h"
+#include "cli.h"
+#include "kidvid.h"
+#include "palette.h"
+#include "text.h"
+#include "pcx.h"
+#include "position.h"
+#include "gui.h"
+#include "2600core.h"
 
 // needed for vc++ -- works on gcc
 
@@ -54,10 +53,6 @@ int strcasecmp(const char *s1, const char *s2)
 	
 	return *(unsigned char *)s1 - *(unsigned char *)(s2 - 1);
 }
-
-//#include "SDL.h"		// not in vc++ or gcc -- must be supplied
-//#include "SDL_audio.h"
-//#include "SDL_opengl.h"
 
 int total_ticks;
 double seconds;

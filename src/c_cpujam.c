@@ -2,6 +2,9 @@
 	jam handler 
 */
 
+#include "globals.h"
+#include "c_banks.h"
+
 void jam(void){
 	AddressBus = reg_pc - 1;
 //	(*ReadROMAccess)();			// <--- *** poison *** ---

@@ -4,7 +4,7 @@
 
 dd match=0;
 //SDLKey matched[100];
-unsigned int matched[100];
+dw matched[100];
 
 void directory_failed()
 {
@@ -158,7 +158,7 @@ int draw_file_list(int cur, int window_line, int ymax)
 	return window_line;
 }
 
-
+/*
 int find_next_rom(int curfile, SDLKey k) {
 	int i,m,p;
 	int matchflag, dirflag;
@@ -198,6 +198,7 @@ int find_next_rom(int curfile, SDLKey k) {
 	match=0;
 	return curfile;
 }
+*/
 
 /* 
 ** File selector.
@@ -240,7 +241,7 @@ int file_selector(char *result) {
 //		SDL_WaitEvent(&ev);	
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 
 //		if(action == GUI_NO_ACTION)
 //			continue;
@@ -362,11 +363,12 @@ int file_selector(char *result) {
 
 
 		default:
-			if(ev.type == SDL_KEYDOWN)
-			{
-				k = ev.key.keysym.sym;
-				curfile = window_line = find_next_rom(curfile, k);
-			}
+//			if(ev.type == SDL_KEYDOWN)
+//			if(keys)
+//			{
+//				k = ev.key.keysym.sym;
+//				curfile = window_line = find_next_rom(curfile, keys); // !!!!!!
+//			}
 			break;
 		}
 

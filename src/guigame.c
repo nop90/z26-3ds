@@ -2,6 +2,8 @@
 ** guigame.c -- game menu
 */
 
+#include "globals.h"
+
 int game_current = 0;	/* currently selected GUI option */
 int exit_game = 0;	/* exit video menu */
 
@@ -356,7 +358,7 @@ void game_gui() {
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		
 		game_current = gui_handle_action(action, &exit_game, game_gui_items, game_current);

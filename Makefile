@@ -77,24 +77,7 @@ export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
-CFILES		:= $(CURDIR)/$(SOURCES)/z26.c \
-	$(CURDIR)/$(SOURCES)/2600core.c		$(CURDIR)/$(SOURCES)/c_cpujam.c		$(CURDIR)/$(SOURCES)/palette.c \
-	$(CURDIR)/$(SOURCES)/c_banks.c		$(CURDIR)/$(SOURCES)/pcx.c			$(CURDIR)/$(SOURCES)/c_soundq.c \
-	$(CURDIR)/$(SOURCES)/gui_sort.c		$(CURDIR)/$(SOURCES)/c_pitfall2.c	$(CURDIR)/$(SOURCES)/c_starpath.c \
-	$(CURDIR)/$(SOURCES)/c_tialine.c	$(CURDIR)/$(SOURCES)/carts.c		$(CURDIR)/$(SOURCES)/position.c	\
-	$(CURDIR)/$(SOURCES)/text.c 		$(CURDIR)/$(SOURCES)/c_catchuppixels.c	$(CURDIR)/$(SOURCES)/c_trace.c \
-	$(CURDIR)/$(SOURCES)/c_riot.c 		$(CURDIR)/$(SOURCES)/genclr.c		$(CURDIR)/$(SOURCES)/flip.c \
-	$(CURDIR)/$(SOURCES)/c_tiasnd.c 	$(CURDIR)/$(SOURCES)/c_tiawrite.c	$(CURDIR)/$(SOURCES)/globals.c \
-	$(CURDIR)/$(SOURCES)/cli.c			$(CURDIR)/$(SOURCES)/controls.c		$(CURDIR)/$(SOURCES)/c_init.c \
-	$(CURDIR)/$(SOURCES)/pixcopy.c 		$(CURDIR)/$(SOURCES)/c_cpu.c		$(CURDIR)/$(SOURCES)/kidvid.c	\
-	$(CURDIR)/$(SOURCES)/c_cpuhand.c	$(CURDIR)/$(SOURCES)/srv.c			$(CURDIR)/$(SOURCES)/video.c \
-	$(CURDIR)/$(SOURCES)/guigame.c		$(CURDIR)/$(SOURCES)/guiinterface.c	$(CURDIR)/$(SOURCES)/guisound.c	\
-	$(CURDIR)/$(SOURCES)/guitweaks.c	$(CURDIR)/$(SOURCES)/guiutil.c		$(CURDIR)/$(SOURCES)/guiabout.c	\
-	$(CURDIR)/$(SOURCES)/guivideo.c	  	$(CURDIR)/$(SOURCES)/gui.c			$(CURDIR)/$(SOURCES)/guidebug.c	\
-	$(CURDIR)/$(SOURCES)/guifilelist.c	$(CURDIR)/$(SOURCES)/sdlsound.c 	$(CURDIR)/$(SOURCES)/sdlmouse.c
-	
-# sdlicon.c	 
-
+CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
@@ -147,6 +130,7 @@ all: $(BUILD)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	$(CC) -M $< > $(@.o=.d)
 
 #---------------------------------------------------------------------------------
 clean:
@@ -205,7 +189,7 @@ $(OUTPUT).elf	:	$(OFILES)
 	@echo "extern const u32" `(echo $(notdir $<).shbin | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(notdir $<).shbin | tr . _)`.h
 	@rm ../$(notdir $<).shbin
 
--include $(DEPENDS)
+-include $(DEPSDIR)/*.d
 
 #---------------------------------------------------------------------------------------
 endif

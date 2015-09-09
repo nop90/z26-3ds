@@ -2,6 +2,8 @@
 ** guiabout.c --  menu
 */
 
+#include "globals.h"
+
 int about_current = 0;	/* currently selected GUI option */
 int exit_about = 0;	/* exit about menu */
 
@@ -35,7 +37,7 @@ void about_gui() {
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 
 		about_current = gui_handle_action(action, &exit_about, about_gui_items, about_current);

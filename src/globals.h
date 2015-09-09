@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <stdio.h> 
+#include <time.h>
+
 typedef unsigned int			dd;		/* define double */
 typedef unsigned short int		dw;		/* define word */
 typedef unsigned char			db;		/* define byte */
@@ -40,6 +43,8 @@ int lines2draw = 1;		/* how many display lines to draw */
 #define TB 9	/* CX-22 TRAK Ball */
 #define AM 10	/* Amiga mouse */
 #define NC 11	/* no controller connected */
+
+FILE *zlog;
 
 int MessageCode=0;		/* gets message code for final output */
 char msg[1000];			/* message buffer */

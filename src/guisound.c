@@ -2,6 +2,8 @@
 ** guisound.c --  menu
 */
 
+#include "globals.h"
+
 #define SQMIN 2048
 
 int sound_current = 0;	/* currently selected GUI option */
@@ -86,7 +88,7 @@ void sound_gui() {
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		
 		sound_current = gui_handle_action(action, &exit_sound, sound_gui_items, sound_current);

@@ -30,6 +30,10 @@
  If the 200h bit is not set and the 80h bit is not set then it's a TIA access.
 */
 
+#include "globals.h"
+#include "c_riot.h"
+#include "c_tialine.h"
+
 extern void C_NewTIA(void);
 
 void Init_CPUhand() {

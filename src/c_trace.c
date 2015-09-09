@@ -4,14 +4,9 @@
 ** GNU General Public License Version 2 (GPL).  z26 comes with no warranty.
 ** Please see COPYING.TXT for details.
 */
-
-extern dd P0_Position;
-extern dd P1_Position;
-extern dd M0_Position;
-extern dd M1_Position;
-extern dd BL_Position;
-
-dd debugflag = 0;
+#include "globals.h"
+#include "c_trace.h"
+#include "c_tialine.h"
 
 db RROM, RROM1, RROM2;  /* contain the result of ReadROM(cpu_pc) */
 

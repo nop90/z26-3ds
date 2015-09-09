@@ -2,8 +2,8 @@
 ** position.c -- position rendering window depending on video mode
 */
 
-dd TopLine = 0;    /* top line of display */
-dd BottomLine = 0; /* bottom line of display */
+#include "globals.h"
+#include "position.h"
 
 void position_game() {
 	CFirst = DefaultCFirst;

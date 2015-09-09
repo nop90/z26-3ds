@@ -6,12 +6,8 @@
 ** mouse stuff
 */
 
-db srv_mouse_button;
-int srv_micky_x, srv_micky_y;
-int srv_mouse_x, srv_mouse_y;
-
-db srv_crap_button;
-int srv_crap_x, srv_crap_y;
+#include "globals.h"
+#include "mouse.h"
 
 void srv_get_mouse_button_status()
 {

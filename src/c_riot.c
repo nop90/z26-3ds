@@ -5,15 +5,8 @@
 	Otherwise blueprnt.bin doesn't come up and others as well.
 */
 
-#define START_TIME 0x7fff
-
-dd Timer = START_TIME;	//  the RIOT Timer
-						// (gets initialized in INIT.C now)
-
-void (* TimerReadVec)(void);	//  timer read vector
-
-db DDR_A = 0;
-db DDR_B = 0;
+#include "globals.h"
+#include "c_riot.h"
 
 
 void WriteRIOTRAM(void){
@@ -169,33 +162,6 @@ void RandomizeRIOTTimer() {
 	Timer = ((Seconds & 0xff) << 10);
 }
 
-
-void (* ReadRIOTTab[8])(void) = {						
-	ReadPortA,			//  280h PA Data
-	ReadDDR_A,			//  281h PA Direction
-	ReadPortB,			//  282h PB Data
-	ReadDDR_B,			//  283h PB Direction
-	ReadTimer,			//  284h Read Timer
-	ReadTimerIntReg,	//  285h Read Timer Interrupt Register
-	ReadTimer,			//  286h Read Timer
-	ReadTimerIntReg		//  287h Read Timer Interrupt Register
-};
-
-void (* WriteRIOTTab[4])(void) = {
-	SetRIOTTimer1,		//  294h
-	SetRIOTTimer8,		//  295h
-	SetRIOTTimer64,		//  296h
-	SetRIOTTimer1024	//  297h
-};
-
-void (* WriteRIOTTab2[4])(void) = {
-	WritePortA,		//  280h
-	WriteDDR_A,		//  281h
-	WriteNothing,	//  282h
-	WriteDDR_B		//  283h
-};
-
-
 void Init_Riot(void){
 	
 	Timer = START_TIME;
@@ -237,44 +203,6 @@ void WriteRIOT(void){
 void  ClockRIOT(void){
 	Timer -= RCycles;
 }
-
-void (* WriteRIOTHandler[32])(void) = {
-	WritePortA,		//  280h
-	WriteDDR_A,		//  281h
-	WriteNothing,	//  282h
-	WriteDDR_B,		//  283h
-	WriteNothing,
-	WriteNothing,
-	WriteNothing,
-	WriteNothing,
-
-	WritePortA,		//  280h
-	WriteDDR_A,		//  281h
-	WriteNothing,	//  282h
-	WriteDDR_B,		//  283h
-	WriteNothing,
-	WriteNothing,
-	WriteNothing,
-	WriteNothing,
-
-	WritePortA,		//  280h
-	WriteDDR_A,		//  281h
-	WriteNothing,	//  282h
-	WriteDDR_B,		//  283h
-	SetRIOTTimer1,		//  294h
-	SetRIOTTimer8,		//  295h
-	SetRIOTTimer64,		//  296h
-	SetRIOTTimer1024,	//  297h
-
-	WritePortA,		//  280h
-	WriteDDR_A,		//  281h
-	WriteNothing,	//  282h
-	WriteDDR_B,		//  283h
-	SetRIOTTimer1,		//  294h
-	SetRIOTTimer8,		//  295h
-	SetRIOTTimer64,		//  296h
-	SetRIOTTimer1024	//  297h
-};
 
 /**
 	z26 is Copyright 1997-2011 by John Saeger and contributors.  

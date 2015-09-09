@@ -5,21 +5,12 @@
 /* 20040530 bkw */
 
 #include <3ds.h>
+#include "gui.h"
+#include "srv.h"
 
 #define GUI_WIDTH 38
 #define FONT_WIDTH 6
 #define FONT_HEIGHT 9
-
-void gui_SetVideoMode()
-{
-db TempVideoMode;
-
-	TempVideoMode = VideoMode;
-	VideoMode &= 3;
-	srv_SetVideoMode();
-	VideoMode = TempVideoMode;
-}
-
 
 #include "guiutil.c"
 #include "gui_sort.c"
@@ -33,14 +24,15 @@ db TempVideoMode;
 #include "guidebug.c"
 #include "guiabout.c"
 
-/*** global variables */
+void gui_SetVideoMode()
+{
+db TempVideoMode;
 
-int exit_gui = 0;	/* handlers set this to 1 to exit the GUI */
-int gui_current = 0;	/* currently selected GUI option */
-
-gui_entry *current_gui_items = NULL;
-db OldPaletteNumber;	/* remember game palette number */
-char newfile[260];
+	TempVideoMode = VideoMode;
+	VideoMode &= 3;
+	srv_SetVideoMode();
+	VideoMode = TempVideoMode;
+}
 
 void run_rom()
 {
@@ -147,7 +139,7 @@ void gui() {
 //		SDL_WaitEvent(&ev);		/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); // &ev);
+		action = gui_navigation(keys); // &ev);
 		if(action == GUI_NO_ACTION) continue;
 		
 		gui_current = gui_handle_action(action, &exit_gui, current_gui_items, gui_current);

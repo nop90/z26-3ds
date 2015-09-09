@@ -1,6 +1,7 @@
 /*
 ** guidebug.c --  menu
 */
+#include "globals.h"
 
 int debug_current = 0;	/* currently selected GUI option */
 int exit_debug = 0;	/* exit timing menu */
@@ -63,7 +64,7 @@ void debug_gui() {
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		
 		debug_current = gui_handle_action(action, &exit_debug, debug_gui_items, debug_current);

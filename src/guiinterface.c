@@ -2,6 +2,8 @@
 ** guiinterface.c --  menu
 */
 
+#include "globals.h"
+
 int interface_current = 0;	/* currently selected GUI option */
 int exit_interface = 0;		/* exit interface menu */
 
@@ -129,7 +131,7 @@ void interface_gui() {
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
 	    hidScanInput();
 		while(!(keys = hidKeysDown()));
-		action = gui_navigation(&keys); //&ev);
+		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		
 		interface_current = gui_handle_action(action, &exit_interface, interface_gui_items, interface_current);

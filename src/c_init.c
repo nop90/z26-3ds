@@ -7,6 +7,16 @@
  Please see COPYING.TXT for details.
 */
 
+#include "globals.h"
+#include "c_banks.h"
+#include "c_riot.h"
+#include "c_tialine.h"
+#include "c_tiasnd.h"
+#include "c_banks.h"
+#include "c_starpath.h"
+#include "c_pitfall2.h"
+#include "c_tiawrite.h"
+
 void InitData() {
 	int i;
 

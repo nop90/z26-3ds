@@ -1,9 +1,11 @@
 /*
 ** srv.c -- service code
 */
+#pragma once
 
 #include <3ds.h>
 #include <sf2d.h>
+#include "globals.h"
 
 sf2d_texture *srv_screen = NULL;
 sf2d_texture *small_screen = NULL;
