@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "c_tiasnd.h"
+
 void ReadCollision(void);
 
 void ReadAnalogINPT(void);

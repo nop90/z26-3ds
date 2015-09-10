@@ -4,6 +4,8 @@
 
 #define Z26_RELEASE "z26x3DS -- An Atari 2600 Emulator for 3DS"
 
+
+/*
 void QueueSoundBytes();
 void position_game();
 void srv_print();
@@ -12,7 +14,7 @@ void show_scanlines();
 void show_transient_status();
 void set_status(char *status);
 void gui();
-
+*/
 
 #include <ctype.h>
 #include <stdio.h>

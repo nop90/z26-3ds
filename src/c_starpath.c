@@ -35,6 +35,9 @@
 #include "c_trace.h"
 #include "c_banks.h"
 #include "c_starpath.h"
+#include "srv.h"
+#include "c_cpuhand.h"
+
 
 /*
 	Starpath initialization

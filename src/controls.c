@@ -2,11 +2,17 @@
 	controls.c -- handle 2600 controllers
 */
 
+#include <stdlib.h>
 #include <3ds.h>
 #include "globals.h"
 #include "controls.h"
 #include "mouse.h"
-
+#include "kidvid.h"
+#include "video.h"
+#include "gui.h"
+#include "carts.h"
+#include "srv.h"
+#include "text.h"
 
 /* swap all signals from port 0 with those from port 1 */
 void SwapPorts()
@@ -645,8 +651,6 @@ void DoKeypad_R()
 		if (KeyTable[P2Pad2]) ChargeTrigger0[3] = CHARGEMAX;
 	}
 }
-
-unsigned char DCTable[4] = {0x0f, 0x0d, 0x0c, 0x0e};
 
 void DoDriving_L()
 {

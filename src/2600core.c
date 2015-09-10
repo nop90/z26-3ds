@@ -11,7 +11,6 @@
 #include "controls.h"
 #include "sound.h"
 #include "carts.h"
-
 #include "c_trace.h"
 #include "c_riot.h"
 #include "c_tialine.h"

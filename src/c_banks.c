@@ -5,6 +5,9 @@
 #include "globals.h"
 #include "c_cpuhand.h"
 #include "c_banks.h"
+#include "c_starpath.h"
+#include "controls.h"
+#include "c_pitfall2.h"
 
 /*
 

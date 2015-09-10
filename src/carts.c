@@ -4,6 +4,7 @@
 
 #include "globals.h"
 #include "carts.h"
+#include "ct.h"
 
 db Lookup(dd *table)
 {

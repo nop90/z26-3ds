@@ -4,6 +4,7 @@
 
 #include <3ds.h>
 #include "globals.h"
+#include "srv.h"
 
 double srv_get_microseconds()
 {

@@ -12,7 +12,7 @@
 #define FONT_WIDTH 6
 #define FONT_HEIGHT 9
 
-#include "guiutil.c"
+#include "guiutil.h"
 #include "gui_sort.c"
 #include "guifilelist.c"
 #include "guivideo.c"

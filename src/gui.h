@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "guiutil.h"
+
 #define GUI_WIDTH 38
 #define FONT_WIDTH 6
 #define FONT_HEIGHT 9

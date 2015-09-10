@@ -31,6 +31,7 @@
 */
 
 #include "globals.h"
+#include "controls.h"
 #include "c_riot.h"
 #include "c_tialine.h"
 

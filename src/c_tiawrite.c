@@ -15,7 +15,11 @@
 
 #include "globals.h"
 #include "position.h"
+#include "controls.h"
 #include "c_tiawrite.h"
+#include "c_tialine.h"
+#include "c_tiasnd.h"
+#include "video.h"
 
 void ReadCollision(void){
 

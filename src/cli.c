@@ -6,8 +6,15 @@
 	load next Starpath Rom
 */
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include "globals.h"
 #include "cli.h"
+#include "carts.h"
+#include "text.h"
+#include "srv.h"
+#include "ct.h"
 
 void cli_LoadNextStarpath(void)
 {
