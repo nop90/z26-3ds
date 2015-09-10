@@ -10,7 +10,8 @@
 ** Please see COPYING.TXT for details.
 */
 
-#pragma once
+#ifndef __KIDVID_H__
+#define __KIDVID_H__
 
 #include "globals.h"
 
@@ -489,3 +490,5 @@ void kv_OpenSampleFile(void);
 void kv_CloseSampleFile(void);
 void kv_SetNextSong(void);
 void kv_GetNextSampleByte(void);
+
+#endif

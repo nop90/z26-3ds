@@ -4,7 +4,8 @@
 
 */
 
-#pragma once
+#ifndef __C_STARPATH_H__
+#define __C_STARPATH_H__
 
 #include "globals.h"
 
@@ -65,6 +66,7 @@ void RBank_SP(void);
 
 void WBank_SP(void);
 
+#endif
 
 /**
  z26 is Copyright 1997-2011 by John Saeger and contributors.  

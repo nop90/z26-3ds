@@ -2,7 +2,10 @@
 ** guiinterface.c --  menu
 */
 
+#include <3ds.h>
 #include "globals.h"
+#include "guiutil.h"
+#include "gui.h"
 
 int interface_current = 0;	/* currently selected GUI option */
 int exit_interface = 0;		/* exit interface menu */

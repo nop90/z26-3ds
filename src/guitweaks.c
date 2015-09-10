@@ -4,7 +4,10 @@
 * lightgun wrapping ?
 */
 
+#include <3ds.h>
 #include "globals.h"
+#include "guiutil.h"
+#include "gui.h"
 
 int tweaks_current = 0;	/* currently selected GUI option */
 int exit_tweaks = 0;	/* exit timing menu */

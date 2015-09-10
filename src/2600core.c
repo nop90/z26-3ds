@@ -22,8 +22,8 @@
 #include "c_pitfall2.h"
 #include "c_starpath.h"
 #include "c_cpujam.h"
-#include "c_cpu.c"
-#include "c_init.c"
+#include "c_cpu.h"
+#include "c_init.h"
 
 /*
  routine to blank the remains of the screen buffer, if not all of the

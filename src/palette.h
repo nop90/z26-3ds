@@ -9,7 +9,9 @@
 ** Please see COPYING.TXT for details.
 */
 
-#pragma once
+#ifndef __PALETTE_H__
+#define __PALETTE_H__
+
 
 #include "globals.h"
 
@@ -89,4 +91,5 @@ void SECAM_Palette();
 
 void GeneratePalette();
 
+#endif
 

@@ -2,7 +2,8 @@
 	controls.c -- handle 2600 controllers
 */
 
-#pragma once
+#ifndef __CONTROLS_H__
+#define __CONTROLS_H__
 
 #include <3ds.h>
 
@@ -238,6 +239,8 @@ void DoNoController_R();
 void ControlSWCHAWrite();
 
 void Controls();
+
+#endif
 
 /**
 	z26 is Copyright 1997-2011 by John Saeger and contributors.  

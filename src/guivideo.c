@@ -2,22 +2,13 @@
 	guivideo.c -- video menu
 */
 
+#include <3ds.h>
 #include "globals.h"
-
-int video_current = 0;	/* currently selected GUI option */
-int exit_video = 0;		/* exit video menu */
-
-char startline_data[52];
-char screen_data[52];
-char line_data[52];
-char narrow_data[52];
-char Tall_data[52];
-char vid_mode_data[52];
-char Depth_data[52];
-char colourloss_data[52];
-char eight_bit_data[52];
-char width_data[52];
-
+#include "gui.h"
+#include "guivideo.h"
+#include "guiutil.h"
+#include "video.h"
+#include "text.h"
 
 void set_screen_string() {
 	if (FullScreen)		sprintf(screen_data, "Full Screen");

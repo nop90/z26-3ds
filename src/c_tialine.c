@@ -22,6 +22,7 @@
 #include "position.h"
 #include "c_soundq.h"
 #include "c_tialine.h"
+#include "c_cpu.h"
 
 void Init_TIA(void){
 	

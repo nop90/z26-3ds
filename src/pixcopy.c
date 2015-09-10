@@ -3,6 +3,7 @@
 */
 
 #include "globals.h"
+#include "srv.h"
 
 // general purpose routine for interlacing
 

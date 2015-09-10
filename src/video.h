@@ -2,7 +2,9 @@
 	video.h
 */
 
-#pragma once
+#ifndef __VIDEO_H__
+#define __VIDEO_H__
+
 
 #include "globals.h"
 
@@ -23,6 +25,8 @@ void srv_SetPalette();
 void srv_SetVideoMode();
 void srv_CopyScreen();
 void gui_CopyScreen();
+
+#endif
 
 /**
 	z26 is Copyright 1997-2011 by John Saeger and contributors.  

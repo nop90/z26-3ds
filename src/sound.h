@@ -2,7 +2,9 @@
 ** sdlsound.h
 */
 
-#pragma once
+#ifndef __SOUND_H__
+#define __SOUND_H__
+
 
 dd SQ_resample;	/* a counter for mixing sound to 44100 Hz */
 
@@ -22,6 +24,8 @@ void SQ_Store();
 void fillerup(void *unused, db *stream, int len);
 void srv_sound_on();
 void srv_sound_off();
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

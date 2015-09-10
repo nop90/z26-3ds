@@ -6,7 +6,8 @@
 	load next Starpath Rom
 */
 
-#pragma once
+#ifndef __CLI_H__
+#define __CLI_H__
 
 #include "globals.h"
 
@@ -39,6 +40,7 @@ char ROMLoaded = 0; char ROMSeen = 0;
 void cli_write_CRC(char *filename);
 void cli_CommandLine(int argc, char *argv[]);
 
+#endif
 
 /**
 	z26 is Copyright 1997-2011 by John Saeger and contributors.  

@@ -2,6 +2,7 @@
 ** sdlsound.c -- SDL sound code
 */
 
+#include <string.h>
 #include "globals.h"
 #include "sound.h"
 

@@ -2,9 +2,11 @@
 ** text.c -- text display
 */
 
+#include <string.h>
 #include "globals.h"
 #include "text.h"
 #include "video.h"
+#include "srv.h"
 
 void clrscr() {
 	int i;
@@ -33,7 +35,7 @@ int get_offset() {		// put FPS display at bottom of screen
 	case 1024: return(1);
 	}
 }
-*
+
 
 /*
 ** our "screen" is 53 characters wide and 28 characters high

@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "kidvid.h"
 #include "sound.h"
+#include "c_tiasnd.h"
 
 void QueueSoundByte() {
 	SampleByte = 0;				/* default kidvid sample */

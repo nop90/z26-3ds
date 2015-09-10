@@ -5,7 +5,8 @@
 	Otherwise blueprnt.bin doesn't come up and others as well.
 */
 
-#pragma once
+#ifndef __C_RIOT_H__
+#define __C_RIOT_H__
 
 #include "globals.h"
 
@@ -110,6 +111,8 @@ void (* WriteRIOTHandler[32])(void) = {
 	SetRIOTTimer64,		//  296h
 	SetRIOTTimer1024	//  297h
 };
+
+#endif
 
 /**
 	z26 is Copyright 1997-2011 by John Saeger and contributors.  

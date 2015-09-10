@@ -2,7 +2,9 @@
 ** position.c -- position rendering window depending on video mode
 */
 
-#pragma once
+#ifndef __POSITION_H__
+#define __POSITION_H__
+
 
 #include "globals.h"
 
@@ -10,6 +12,8 @@ dd TopLine = 0;    /* top line of display */
 dd BottomLine = 0; /* bottom line of display */
 
 void position_game();
+
+#endif
 
 /**
  z26 is Copyright 1997-2011 by John Saeger and contributors.  

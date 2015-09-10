@@ -4,6 +4,8 @@
 **		regular file) 
 */
 
+#include <string.h>
+
 int filename_cmp(char *left, char *right) {
 	int rlen, llen;
 	char llast, rlast;

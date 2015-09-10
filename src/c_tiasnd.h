@@ -7,7 +7,8 @@
 
 */
 
-#pragma once
+#ifndef __C_TIASND_H__
+#define __C_TIASND_H__
 
 #include "globals.h"
 
@@ -194,6 +195,8 @@ void TSB_ProcessChannel(int chan);
 void TSB_Ch0done();
 
 dd TIA_Sound_Byte();
+
+#endif
 
 /**
  z26 is Copyright 1997-2011 by John Saeger and contributors.  

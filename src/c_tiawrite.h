@@ -9,7 +9,8 @@
  Please see COPYING.TXT for details.
 */
 
-#pragma once
+#ifndef __C_TIAWRITE_H__
+#define __C_TIAWRITE_H__
 
 #include "c_tiasnd.h"
 
@@ -191,3 +192,5 @@ void (* TIAWriteHandler[64])(void) = {
 };
 
 void C_NewTIA(void);
+
+#endif

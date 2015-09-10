@@ -4,6 +4,7 @@
 
 #include "globals.h"
 #include "position.h"
+#include "carts.h"
 
 void position_game() {
 	CFirst = DefaultCFirst;

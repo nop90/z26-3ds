@@ -4,6 +4,8 @@
 
 #include "globals.h"
 #include "c_banks.h"
+#include "c_starpath.h"
+#include "text.h"
 
 void jam(void){
 	AddressBus = reg_pc - 1;

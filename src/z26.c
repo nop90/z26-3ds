@@ -2,9 +2,6 @@
 	z26 -- an Atari 2600 emulator
 */
 
-#define Z26_RELEASE "z26x3DS -- An Atari 2600 Emulator for 3DS"
-
-
 /*
 void QueueSoundBytes();
 void position_game();
@@ -24,9 +21,7 @@ void gui();
 #include <sys/stat.h>
 #include <time.h>
 
-//#ifdef LINUX
 #include <unistd.h>		// for chdir
-//#endif
 
 #include <3ds.h>
 #include "globals.h"
@@ -46,7 +41,7 @@ void gui();
 
 // needed for vc++ -- works on gcc
 
-int strcasecmp(const char *s1, const char *s2)
+/*int strcasecmp(const char *s1, const char *s2)
 {
 	while(tolower(*s1) == tolower(*s2++))
 	{
@@ -55,6 +50,7 @@ int strcasecmp(const char *s1, const char *s2)
 	
 	return *(unsigned char *)s1 - *(unsigned char *)(s2 - 1);
 }
+*/
 
 int total_ticks;
 double seconds;

@@ -4,7 +4,8 @@
 
 /* 20040530 bkw */
 
-#pragma once
+#ifndef __GUI_H__
+#define __GUI_H__
 
 #include "guiutil.h"
 
@@ -30,6 +31,8 @@ void hand_load_rom();
 void hand_exit() ;
 
 void gui();
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

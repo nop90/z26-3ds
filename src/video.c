@@ -6,9 +6,15 @@
 
 // SDL_Surface *screen_surface;  // !!
 
-#include "pixcopy.h"
+#include <string.h>
+#include "globals.h"
 #include "flip.h"
 #include "video.h"
+#include "srv.h"
+#include "palette.h"
+#include "position.h"
+#include "text.h"
+#include "pixcopy.c"
 
 void ClearScreenBuffers()
 {

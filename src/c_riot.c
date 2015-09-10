@@ -7,6 +7,7 @@
 
 #include "globals.h"
 #include "c_riot.h"
+#include "controls.h"
 
 
 void WriteRIOTRAM(void){

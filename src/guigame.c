@@ -2,7 +2,15 @@
 ** guigame.c -- game menu
 */
 
+#include <3ds.h>
 #include "globals.h"
+#include "guiutil.h"
+#include "gui.h"
+#include "text.h"
+#include "video.h"
+#include "cli.h"
+#include "srv.h"
+#include "guifilelist.c"
 
 int game_current = 0;	/* currently selected GUI option */
 int exit_game = 0;	/* exit video menu */

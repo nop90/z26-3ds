@@ -2,7 +2,8 @@
 ** text.c -- text display
 */
 
-#pragma once
+#ifndef __TEXT_H__
+#define __TEXT_H__
 
 #include "globals.h"
 
@@ -288,6 +289,7 @@ void clear_status();
 void set_status(char *status);
 void srv_print(char *msg);
 
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

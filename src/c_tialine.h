@@ -9,7 +9,8 @@
  Please see COPYING.TXT for details.
 */
 
-#pragma once
+#ifndef __C_TIALINE_H__
+#define __C_TIALINE_H__
 
 #include "globals.h"
 
@@ -279,3 +280,5 @@ dw *TIA_Pixel_PTR;
 dd *MyDisplayPointer;
 
 void nTIALineTo(void);
+
+#endif

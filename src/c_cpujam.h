@@ -2,9 +2,12 @@
 	jam handler 
 */
 
-#pragma once
+#ifndef __C_CPUJAM_H__
+#define __C_CPUJAM_H__
 
 void jam(void);
+
+#endif
 
 /**
 	z26 is Copyright 1997-2011 by John Saeger and contributors.  

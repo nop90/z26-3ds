@@ -2,9 +2,21 @@
 ** guifilelist.c -- the gui file lister
 */
 
-dd match=0;
-//SDLKey matched[100];
-dw matched[100];
+#include <stdlib.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <string.h>
+#include <3ds.h>
+#include "guifilelist.h"
+#include "globals.h"
+#include "guiutil.h"
+#include "gui_sort.h"
+#include "guivideo.h"
+#include "gui.h"
+#include "text.h"
+#include "video.h"
+#include "cli.h"
+#include "srv.h"
 
 void directory_failed()
 {
@@ -14,15 +26,6 @@ void directory_failed()
 	z26_3ds_quit();
 	exit(1);
 }
-
-#define MAX_ENTS 20000
-#define MAX_LEN 256
-#define FT_DIRS 0
-#define FT_FILES 1
-
-static int filesread = 0;
-static char *file_list[MAX_ENTS+1];
-static char file_names[(MAX_ENTS+1)*(MAX_LEN+1)];
 
 void get_list(int file_type) {
 	DIR *dirp;
@@ -207,10 +210,6 @@ int find_next_rom(int curfile, SDLKey k) {
 **
 **	result is filled with the filename.
 */
-
-int window_line = 0;
-int curfile = 0;
-int first_filelist = 1;
 
 int file_selector(char *result) {
 //	SDL_Event ev;

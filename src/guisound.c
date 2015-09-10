@@ -2,7 +2,10 @@
 ** guisound.c --  menu
 */
 
+#include <3ds.h>
 #include "globals.h"
+#include "guiutil.h"
+#include "gui.h"
 
 #define SQMIN 2048
 

@@ -24,8 +24,7 @@
 void ReadCollision(void){
 
 	CatchUpPixels();
-	DataBus = (DataBus & 0x3f) |
-	          ((TIACollide >> ((AddressBus & 0x7) << 1)) & 0x3) << 6;
+	DataBus = (DataBus & 0x3f) | ((TIACollide >> ((AddressBus & 0x7) << 1)) & 0x3) << 6;
 }
 
 void ReadAnalogINPT(void){

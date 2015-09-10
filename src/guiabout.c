@@ -2,7 +2,9 @@
 ** guiabout.c --  menu
 */
 
+#include <3ds.h>
 #include "globals.h"
+#include "guiutil.h"
 
 int about_current = 0;	/* currently selected GUI option */
 int exit_about = 0;	/* exit about menu */

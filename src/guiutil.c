@@ -2,8 +2,15 @@
 ** guiutil.c --gui utility functions
 */
 
+#include <3ds.h>
 #include "globals.h"
 #include "guiutil.h"
+#include "gui.h"
+#include "text.h"
+#include "video.h"
+#include "pcx.h"
+
+
 
 /* Utility function for use by any menu item that's a toggle */
 
@@ -21,7 +28,7 @@ void set_yesno_string(char *str, int yesno) {
 	support the mouse in the GUI, we'd only have to change this one
 	routine. */
 //gui_action gui_navigation(SDL_Event *evp) {
-gui_action gui_navigation(u32 keys) {
+gui_action gui_navigation(dd keys) {
 //	if(evp->type == SDL_QUIT) {
 //		return GUI_EXIT_GUI;
 //	}

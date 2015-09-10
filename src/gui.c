@@ -7,15 +7,16 @@
 #include <3ds.h>
 #include "gui.h"
 #include "srv.h"
+#include "flip.h"
 
 #define GUI_WIDTH 38
 #define FONT_WIDTH 6
 #define FONT_HEIGHT 9
 
 #include "guiutil.h"
-#include "gui_sort.c"
-#include "guifilelist.c"
-#include "guivideo.c"
+#include "gui_sort.h"
+#include "guifilelist.h"
+#include "guivideo.h"
 #include "guigame.c"
 #include "guisound.c"
 // #include "guitiming.c"

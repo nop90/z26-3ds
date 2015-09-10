@@ -5,12 +5,15 @@
 ** Please see COPYING.TXT for details.
 */
 
-#pragma once
+#ifndef __C_TRACE_H__
+#define __C_TRACE_H__
 
 dd debugflag = 0;
 
 void TraceInstruction(void);
 void ShowSCWrite(void);
+
+#endif
 
 /*
  * $Log: trace.c,v $

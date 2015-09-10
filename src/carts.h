@@ -2,7 +2,8 @@
 ** recognize cart and set up special properties
 */
 
-#pragma once
+#ifndef __CARTS_H__
+#define __CARTS_H__
 
 #include "globals.h"
 
@@ -16,6 +17,8 @@ db LG_WrapLine;		/* light gun wrap line */
 
 db Lookup(dd *table);
 void RecognizeCart(void);
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

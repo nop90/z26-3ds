@@ -3,7 +3,8 @@
  Pitfall 2 8K bankswitch scheme -- similar to standard F8
 */
 
-#pragma once
+#ifndef __C_PITFALL2_H__
+#define __C_PITFALL2_H__
 
 #include "globals.h"
 
@@ -194,3 +195,5 @@ void (* P2_WriteFunctions[0x40])(void) = {
 void Init_P2(void);
 void SetPitfallII(void);
 void InitP2(void);
+
+#endif

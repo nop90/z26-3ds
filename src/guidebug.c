@@ -1,7 +1,10 @@
 /*
 ** guidebug.c --  menu
 */
+
+#include <3ds.h>
 #include "globals.h"
+#include "guiutil.h"
 
 int debug_current = 0;	/* currently selected GUI option */
 int exit_debug = 0;	/* exit timing menu */

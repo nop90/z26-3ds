@@ -5,7 +5,9 @@
 /*
 ** mouse stuff
 */
-#pragma once
+#ifndef __MOUSE_H__
+#define __MOUSE_H__
+
 
 #include "globals.h"
 
@@ -18,6 +20,8 @@ int srv_crap_x, srv_crap_y;
 
 void srv_get_mouse_button_status();
 void srv_get_mouse_movement();
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

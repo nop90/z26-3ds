@@ -2,9 +2,10 @@
 ** cart types
 */
 
-#pragma once
-#include "globals.h"
+#ifndef __CT_H__
+#define __CT_H__
 
+#include "globals.h"
 
 dd	Player_1_hard[] = {
 	0x5c161fe4,     /* he_man */
@@ -424,6 +425,8 @@ dd      BLACKLIST[] = {
 	0x30aab3a9,		/* Rocky & Bullwinkle (SuperCharger) (prototype) [b1].a26 */
 	-1
 };
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

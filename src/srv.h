@@ -1,7 +1,9 @@
 /*
 ** srv.c -- service code
 */
-#pragma once
+
+#ifndef __SRV_H__
+#define __SRV_H__
 
 #include <3ds.h>
 #include <sf2d.h>
@@ -38,6 +40,8 @@ void z26_3ds_quit();
 void srv_Events();
 void Init_Service();
 void srv_Cleanup();
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

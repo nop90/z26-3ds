@@ -11,6 +11,7 @@
 #include "video.h"
 #include "sound.h"
 #include "mouse.h"
+#include "kidvid.h"
 
 
 //#include "icon.c"  // needed???
@@ -117,7 +118,7 @@ void srv_Events()
 */
 
     hidScanInput();
-    u32 keypressed = hidKeysHeld();
+    u32 keys = hidKeysHeld();
 	
 		KeyTable[KEY_SELECT] = (keys & KEY_SELECT) ? 0x80 : 0;
 		KeyTable[KEY_START] = (keys & KEY_START) ? 0x80 : 0;

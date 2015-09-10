@@ -8,6 +8,7 @@
 
 #include "globals.h"
 #include "mouse.h"
+#include "srv.h"
 
 void srv_get_mouse_button_status()
 {

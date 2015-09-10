@@ -2,7 +2,8 @@
 ** guiutil.c --gui utility functions
 */
 
-#pragma once
+#ifndef __GUIUTIL_H__
+#define __GUIUTIL_H__
 
 #include "globals.h"
 
@@ -69,6 +70,8 @@ gui_action gui_navigation(dd keys);
 int set_gui_height(gui_entry *menu);
 int gui_handle_action(int action, int *ptr_exit_gui, gui_entry *current_gui_items, int gui_current);
 void draw_gui(gui_entry *entries, int cur);
+
+#endif
 
 /**
 ** z26 is Copyright 1997-2011 by John Saeger and contributors.  

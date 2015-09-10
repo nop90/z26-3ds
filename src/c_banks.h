@@ -2,7 +2,8 @@
 ** banks.c -- z26 bank switch stuff
 */
 
-#pragma once
+#ifndef __BANKS_H__
+#define __BANKS_H__
 
 #include "globals.h"
 
@@ -143,3 +144,5 @@ void (* InitMemoryMap[24])(void) = {
 
 void DetectBySize();
 void SetupBanks();
+
+#endif
