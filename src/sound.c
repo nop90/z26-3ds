@@ -6,6 +6,8 @@
 #include "globals.h"
 #include "sound.h"
 
+static int sound_is_on = 0;
+
 void Init_SoundQ() 
 {
 	SQ_resample = 5;

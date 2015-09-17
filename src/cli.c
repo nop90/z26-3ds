@@ -16,6 +16,12 @@
 #include "srv.h"
 #include "ct.h"
 
+char cli_controllers[12][3] =
+	{"JS","PC","KP","DC","LG","CM","KV","ML","ST","TB","AM","NC"};
+
+char ROMLoaded = 0; 
+char ROMSeen = 0;
+
 void cli_LoadNextStarpath(void)
 {
     int i,j, LoadCount, LoadNum;

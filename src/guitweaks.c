@@ -167,8 +167,9 @@ void tweaks_gui() {
 		draw_gui(tweaks_gui_items, tweaks_current);
 		
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		

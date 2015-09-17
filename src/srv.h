@@ -9,10 +9,17 @@
 #include <sf2d.h>
 #include "globals.h"
 
-sf2d_texture *srv_screen = NULL;
-sf2d_texture *small_screen = NULL;
-sf2d_texture *large_screen = NULL;
-sf2d_texture *tiny_screen = NULL;
+//SDL_Joystick *JoystickTable[16];
+
+sf2d_texture *srv_screen;
+sf2d_texture *srv_gui;
+//sf2d_texture *small_screen;
+//sf2d_texture *large_screen;
+//sf2d_texture *tiny_screen;
+
+db screen_buffer_count;
+db srv_done;
+dd odd;		/* is the frame number odd? -- for interlaced modes */
 
 db *srv_buffer;
 dd srv_pitch;
@@ -25,10 +32,6 @@ db *emu_pixels;         /* pointer to current emulator buffer */
 db *emu_pixels_prev;    /* pointer to previous emulator buffer */
 db *prev_emu_pixels;	/* previous pointer to display screen */
 db *prev_emu_pixels_prev; /* previous pointer to previous emulator buffer */
-
-db screen_buffer_count = 0;
-db srv_done = 0;
-dd odd = 0;		/* is the frame number odd? -- for interlaced modes */
 
 dd srv_colortab_hi[128];		/* for mapping atari 8-bit colors to 32-bit colors */
 dd srv_colortab_med[128];		/* for soft scanlines */

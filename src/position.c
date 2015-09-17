@@ -6,6 +6,9 @@
 #include "position.h"
 #include "carts.h"
 
+dd TopLine = 0;    /* top line of display */
+dd BottomLine = 0; /* bottom line of display */
+
 void position_game() {
 	CFirst = DefaultCFirst;
 	if(DefaultCFirst == 0xffff) 	// if no default first line to render

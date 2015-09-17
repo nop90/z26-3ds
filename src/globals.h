@@ -8,7 +8,7 @@
 #include <stdio.h> 
 #include <time.h>
 
-#define Z26_RELEASE "z26x3DS -- An Atari 2600 Emulator for 3DS"
+#define Z26_RELEASE "z26 3DS - Atari 2600 Emulator"
 
 typedef unsigned int			dd;		/* define double */
 typedef unsigned short int		dw;		/* define word */
@@ -25,6 +25,7 @@ int	FPSflips;
 double	CurrentFPS;
 double	FPStime;
 
+float screen_scale;
 int screen_width;
 int screen_height;
 int screen_bpp;
@@ -89,7 +90,8 @@ FILE *parmfp;	// parameter file pointer
 
 #define KEYTABLESIZE 512
 
-db KeyTable[KEYTABLESIZE];	/* event handler should tell z26 about keystrokes here */
+//db KeyTable[KEYTABLESIZE];	/* event handler should tell z26 about keystrokes here */
+dw KeyTable;	/* event handler should tell z26 about keystrokes here */
 
 /* event handler should tell z26 about joystick states here */
 int JoystickAxis[16][6];

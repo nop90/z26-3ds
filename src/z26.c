@@ -2,17 +2,6 @@
 	z26 -- an Atari 2600 emulator
 */
 
-/*
-void QueueSoundBytes();
-void position_game();
-void srv_print();
-void srv_Events();
-void show_scanlines();
-void show_transient_status();
-void set_status(char *status);
-void gui();
-*/
-
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -60,16 +49,26 @@ Handle dirHandle;
 
 int main() 
 {
-	u8  isN3DS = 0;
+	
+	
+//	u8  isN3DS = 0;
 
-	aptOpenSession();
-	APT_SetAppCpuTimeLimit(NULL, 30); // enables syscore usage
-	aptCloseSession();
+//	aptOpenSession();
+//	APT_SetAppCpuTimeLimit(NULL, 30); // enables syscore usage
+//	aptCloseSession();
 
-	APT_CheckNew3DS(NULL, &isN3DS);
+//	APT_CheckNew3DS(NULL, &isN3DS);
+	
+	    // Init console for text output
 
     sdmcArchive = (FS_archive){ARCH_SDMC, (FS_path){PATH_EMPTY, 1, (u8*)""}};
     FSUSER_OpenArchive(NULL, &sdmcArchive);
+
+	z26_3ds_Init(); // !!
+	
+//    consoleInit(GFX_BOTTOM, NULL); // !!!!!
+
+	chdir("sdmc://Atari2600") ;
 
 	srand(time(0));
 	def_LoadDefaults();
@@ -79,13 +78,6 @@ int main()
 	GamePaused = 1;
 	cli_ReadParms("z26.gui");
 
-//	ROMLoaded = cli_LoadROM("sdmc://rom.bin"); // test run
-//	ROMSeen = 1; // test run
-
-	
-//	Init_SDL();
-	z26_3ds_Init(); // !!
-	
 	c_emulator();		   /* call emulator */
 
 //	if(GrabInput)

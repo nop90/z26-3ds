@@ -5,6 +5,7 @@
 #ifndef __SOUND_H__
 #define __SOUND_H__
 
+#include "globals.h"
 
 dd SQ_resample;	/* a counter for mixing sound to 44100 Hz */
 
@@ -14,7 +15,7 @@ db *SQ_Output;	/* pointer to next available byte for fetching */
 db *SQ_Top;	/* pointer to the top of the queue */
 
 
-static int sound_is_on = 0;
+static int sound_is_on;
 
 
 void Init_SoundQ();

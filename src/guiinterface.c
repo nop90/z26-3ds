@@ -132,8 +132,9 @@ void interface_gui() {
 		draw_gui(interface_gui_items, interface_current);
 		
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		

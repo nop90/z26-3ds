@@ -9,6 +9,74 @@
 #include "c_riot.h"
 #include "controls.h"
 
+dd Timer = START_TIME;	//  the RIOT Timer
+						// (gets initialized in INIT.C now)
+db DDR_A = 0;
+db DDR_B = 0;
+
+void (* ReadRIOTTab[8])(void) = {						
+	ReadPortA,			//  280h PA Data
+	ReadDDR_A,			//  281h PA Direction
+	ReadPortB,			//  282h PB Data
+	ReadDDR_B,			//  283h PB Direction
+	ReadTimer,			//  284h Read Timer
+	ReadTimerIntReg,	//  285h Read Timer Interrupt Register
+	ReadTimer,			//  286h Read Timer
+	ReadTimerIntReg		//  287h Read Timer Interrupt Register
+};
+
+void (* WriteRIOTTab[4])(void) = {
+	SetRIOTTimer1,		//  294h
+	SetRIOTTimer8,		//  295h
+	SetRIOTTimer64,		//  296h
+	SetRIOTTimer1024	//  297h
+};
+
+void (* WriteRIOTTab2[4])(void) = {
+	WritePortA,		//  280h
+	WriteDDR_A,		//  281h
+	WriteNothing,	//  282h
+	WriteDDR_B		//  283h
+};
+
+
+void (* WriteRIOTHandler[32])(void) = {
+	WritePortA,		//  280h
+	WriteDDR_A,		//  281h
+	WriteNothing,	//  282h
+	WriteDDR_B,		//  283h
+	WriteNothing,
+	WriteNothing,
+	WriteNothing,
+	WriteNothing,
+
+	WritePortA,		//  280h
+	WriteDDR_A,		//  281h
+	WriteNothing,	//  282h
+	WriteDDR_B,		//  283h
+	WriteNothing,
+	WriteNothing,
+	WriteNothing,
+	WriteNothing,
+
+	WritePortA,		//  280h
+	WriteDDR_A,		//  281h
+	WriteNothing,	//  282h
+	WriteDDR_B,		//  283h
+	SetRIOTTimer1,		//  294h
+	SetRIOTTimer8,		//  295h
+	SetRIOTTimer64,		//  296h
+	SetRIOTTimer1024,	//  297h
+
+	WritePortA,		//  280h
+	WriteDDR_A,		//  281h
+	WriteNothing,	//  282h
+	WriteDDR_B,		//  283h
+	SetRIOTTimer1,		//  294h
+	SetRIOTTimer8,		//  295h
+	SetRIOTTimer64,		//  296h
+	SetRIOTTimer1024	//  297h
+};
 
 void WriteRIOTRAM(void){
 	

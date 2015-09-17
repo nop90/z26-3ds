@@ -8,6 +8,8 @@
 #include "c_trace.h"
 #include "c_tialine.h"
 
+dd debugflag = 0;
+
 db RROM, RROM1, RROM2;  /* contain the result of ReadROM(cpu_pc) */
 
 enum {_imp, _acc, _rel, _imm, _abs, _abs_x, _abs_y, _zero, _zero_x, _zero_y, _ind, _ind_x, _ind_y};

@@ -67,7 +67,7 @@ gui_action gui_navigation(dd keys) {
 		}
 	}
 */
-
+/*
 	if (keys & KEY_RIGHT) {
 		return GUI_ACTIVATE_PRI;
 	} else if (keys & KEY_LEFT) {
@@ -87,6 +87,29 @@ gui_action gui_navigation(dd keys) {
 	} else if (keys & KEY_START) {
 		return GUI_END;
 	} else if (keys & KEY_Y) {
+		SaveScreenshot();
+		return GUI_NO_ACTION;
+	} else return GUI_NO_ACTION;
+*/
+	if (keys & KEY_A) {
+		return GUI_ACTIVATE_PRI;
+	} else if (keys & KEY_Y) {
+		return GUI_ACTIVATE_SEC;
+	} else if (keys & KEY_UP) {
+		return GUI_UP;
+	} else if (keys & KEY_DOWN) {
+		return GUI_DOWN;
+	} else if (keys & KEY_B) {
+		return GUI_EXIT_GUI;
+	} else if (keys & KEY_LEFT) {
+		return GUI_PAGEUP;
+	} else if (keys & KEY_RIGHT) {
+		return GUI_PAGEDOWN;
+	} else if (keys & KEY_X) {
+		return GUI_EXIT_GUI;
+	} else if (keys & KEY_START) {
+		return GUI_END;
+	} else if (keys & KEY_SELECT) {
 		SaveScreenshot();
 		return GUI_NO_ACTION;
 	} else return GUI_NO_ACTION;
@@ -167,11 +190,11 @@ void draw_gui(gui_entry *entries, int cur) {
 
 	clrscr();
 	
-	y = 4;
+	y = 2;
 //	y = 2 + (MaxLines/FONT_HEIGHT - set_gui_height(entries))/2;
 	x = (tiawidth/FONT_WIDTH - GUI_WIDTH)/2;
 
-	draw_msg_at(1, 1);
+	draw_msg_at(1, 0);
 
 	for(i=0; i<gui_height; i++) {
 		if(entries[i].data == NULL)

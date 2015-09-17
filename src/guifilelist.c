@@ -18,6 +18,12 @@
 #include "cli.h"
 #include "srv.h"
 
+dd match=0;
+static int filesread = 0;
+int window_line = 0;
+int curfile = 0;
+int first_filelist = 1;
+
 void directory_failed()
 {
 	clrscr();
@@ -238,8 +244,9 @@ int file_selector(char *result) {
 
 		window_line = draw_file_list(curfile, window_line, max_height-2);
 //		SDL_WaitEvent(&ev);	
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); //&ev);
 
 //		if(action == GUI_NO_ACTION)

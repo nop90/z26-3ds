@@ -15,10 +15,11 @@
 
 /*** global variables */
 
-int exit_gui = 0;	/* handlers set this to 1 to exit the GUI */
-int gui_current = 0;	/* currently selected GUI option */
+int exit_gui;	/* handlers set this to 1 to exit the GUI */
+int gui_current;	/* currently selected GUI option */
 
-gui_entry *current_gui_items = NULL;
+gui_entry *current_gui_items;
+
 db OldPaletteNumber;	/* remember game palette number */
 char newfile[260];
 

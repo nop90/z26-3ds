@@ -7,12 +7,6 @@
 #ifndef __2600CORE_H__
 #define __2600CORE_H__
 
-/*
-void do_Instruction_line(void);
-void SetStarpath(void);
-void SetPitfallII(void);
-*/
-
 void BlankBufferEnd(void);
 void ScanFrame();
 void Reset_emulator(void);

@@ -5,11 +5,10 @@
 #ifndef __POSITION_H__
 #define __POSITION_H__
 
-
 #include "globals.h"
 
-dd TopLine = 0;    /* top line of display */
-dd BottomLine = 0; /* bottom line of display */
+dd TopLine;    /* top line of display */
+dd BottomLine; /* bottom line of display */
 
 void position_game();
 

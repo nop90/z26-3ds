@@ -14,6 +14,108 @@
 #include "srv.h"
 #include "text.h"
 
+unsigned char DCTable[4] = {0x0f, 0x0d, 0x0c, 0x0e};
+db MLG_ShotCycle = 0;	/* cycle and line of hit - gets */
+dd MLG_ShotLine = 0;	/*   checked from cpuhand.asm */
+
+//db KidVidStatus	= 0;
+dd KidVidIdx = 0;
+db KidVidBlock = 0;
+db KidVidBlockIdx = 0;
+
+/* number of blocks on tape: */
+db KVBlocks[6] = 	{2+40,	2+21,  2+35,  /* Smurfs tapes 3, 1, 2 */
+			42+60, 42+78, 42+60}; /* BBears tapes 1, 2, 3 (40 extra blocks for intro)*/
+
+db KVData[6*8] =
+{
+/* KVData44 */
+0x7b,	// 0111 1011b	; (1)0
+0x1e,	// 0001 1110b	; 1
+0xc6,	// 1100 0110b	; 00
+0x31,	// 0011 0001b	; 01
+0xec,	// 1110 1100b	; 0
+0x60,	// 0110 0000b	; 0+
+
+/* KVData48 */
+0x7b,	// 0111 1011b	; (1)0
+0x1e,	// 0001 1110b	; 1
+0xc6,	// 1100 0110b	; 00
+0x3d,	// 0011 1101b	; 10
+0x8c,	// 1000 1100b	; 0
+0x60,	// 0110 0000b	; 0+
+
+/* KVData00 */
+0xf6,	// 1111 0110b
+0x31,	// 0011 0001b
+0x8c,	// 1000 1100b
+0x63,	// 0110 0011b
+0x18,	// 0001 1000b
+0xc0,	// 1100 0000b
+
+/* KVData01 */
+0xf6,	// 1111 0110b
+0x31,	// 0011 0001b
+0x8c,	// 1000 1100b
+0x63,	// 0110 0011b
+0x18,	// 0001 1000b
+0xf0,	// 1111 0000b
+
+/* KVData02 */
+0xf6,	// 1111 0110b
+0x31,	// 0011 0001b
+0x8c,	// 1000 1100b
+0x63,	// 0110 0011b
+0x1e,	// 0001 1110b
+0xc0,	// 1100 0000b
+
+/* KVData03 */
+0xf6,	// 1111 0110b
+0x31,	// 0011 0001b
+0x8c,	// 1000 1100b
+0x63,	// 0110 0011b
+0x1e,	// 0001 1110b
+0xf0,	// 1111 0000b
+
+/* KVPause */
+0x3f,	// 0011 1111b
+0xf0,	// 1111 0000b
+0x00,	// 0000 0000b
+0x00,	// 0000 0000b
+0x00,	// 0000 0000b
+0x00,	// 0000 0000b
+
+/* KVData80 */
+0xf7,	// 1111 0111b	; marks end of tape (green/yellow screen)
+0xb1,	// 1011 0001b
+0x8c,	// 1000 1100b
+0x63,	// 0110 0011b
+0x18,	// 0001 1000b
+0xc0	// 1100 0000b
+};
+
+dd MindlinkPos_L = 0x2800;	/* position value in Mindlink controller */
+				/* gets transferred bitwise (16 bits) */
+dd MindlinkPos_R = 0x2800;
+dd MindlinkShift_L = 1;		/* which bit to transfer next */
+dd MindlinkShift_R = 1;		/* which bit to transfer next */
+
+
+db TrakBallController = 0;	/* Do we use any TrakBall type controller */
+dd TrakBallCountV = 0;		/* how many new vertical values this frame */
+dd TrakBallCountH = 0;		/* how many new horizontal values this frame */
+dd TrakBallLinesV = 1;		/* how many lines to wait before sending new vert val */
+dd TrakBallLinesH = 1;		/* how many lines to wait before sending new horz val */
+dd TrakBallLeft = 0;		/* was TrakBall moved left or moved right instead */
+dd TrakBallDown = 0;		/* was TrakBall moved down or moved up instead */
+db TrakBallTableST_V[4] = {0x00, 0x10, 0x30, 0x20};		/* ST mouse / CX-80 */
+db TrakBallTableST_H[4] = {0x00, 0x80, 0xc0, 0x40};		/* ST mouse / CX-80 */
+db TrakBallTableAM_V[4] = {0x00, 0x80, 0xa0, 0x20};		/* Amiga mouse */
+db TrakBallTableAM_H[4] = {0x00, 0x10, 0x50, 0x40};		/* Amiga mouse */
+db TrakBallTableTB_V[2][2] = {{0x00, 0x10},{0x20, 0x30}};	/* CX-22 */
+db TrakBallTableTB_H[2][2] = {{0x40, 0x00},{0xc0, 0x80}};	/* CX-22 */
+
+
 /* swap all signals from port 0 with those from port 1 */
 void SwapPorts()
 {
@@ -46,8 +148,8 @@ void DoBoosterGrip_L()
 	ChargeTrigger0[1] = CHARGEMAX;
 	if (KeyboardEnabled)
 	{
-		if (KeyTable[P1TriggerBG]) ChargeTrigger0[0] = 0;
-		if (KeyTable[P1BoosterBG]) ChargeTrigger0[1] = 0;
+		if (KeyTable&P1TriggerBG) ChargeTrigger0[0] = 0;
+		if (KeyTable&P1BoosterBG) ChargeTrigger0[1] = 0;
 	}
 	if (JoystickEnabled)
 	{
@@ -62,8 +164,8 @@ void DoBoosterGrip_R()
 	ChargeTrigger0[3] = CHARGEMAX;
 	if (KeyboardEnabled)
 	{
-		if (KeyTable[P2TriggerBG]) ChargeTrigger0[2] = 0;
-		if (KeyTable[P2BoosterBG]) ChargeTrigger0[3] = 0;
+		if (KeyTable&P2TriggerBG) ChargeTrigger0[2] = 0;
+		if (KeyTable&P2BoosterBG) ChargeTrigger0[3] = 0;
 	}
 	if (JoystickEnabled)
 	{
@@ -115,20 +217,11 @@ void DoJoystick_L()
 
 	if (KeyboardEnabled)
 	{
-		if (KeyTable[P1Right]) IOPortA = IOPortA & 0x7f;
-		if (KeyTable[P1Left]) IOPortA = IOPortA & 0xbf;
-		if (KeyTable[P1Down]) IOPortA = IOPortA & 0xdf;
-		if (KeyTable[P1Up]) IOPortA = IOPortA & 0xef;
-		if (KeyTable[P1Fire]) InputLatch[0] = 0x00;
-
-/* for OLPC XO-1
-
-		if (KeyTable[SDLK_KP6]) IOPortA = IOPortA & 0x7f;
-		if (KeyTable[SDLK_KP4]) IOPortA = IOPortA & 0xbf;
-		if (KeyTable[SDLK_KP2]) IOPortA = IOPortA & 0xdf;
-		if (KeyTable[SDLK_KP8]) IOPortA = IOPortA & 0xef;
-		if (KeyTable[SDLK_KP3]) InputLatch[0] = 0x00;
-*/		
+		if (KeyTable&P1Right) IOPortA = IOPortA & 0x7f;
+		if (KeyTable&P1Left) IOPortA = IOPortA & 0xbf;
+		if (KeyTable&P1Down) IOPortA = IOPortA & 0xdf;
+		if (KeyTable&P1Up) IOPortA = IOPortA & 0xef;
+		if (KeyTable&P1Fire) InputLatch[0] = 0x00;
 	}
 
 	if (JoystickEnabled)
@@ -165,11 +258,11 @@ void DoJoystick_R()
 	InputLatch[1] = 0x80;
 	if (KeyboardEnabled)
 	{
-		if (KeyTable[P2Right]) IOPortA = IOPortA & 0xf7;
-		if (KeyTable[P2Left]) IOPortA = IOPortA & 0xfb;
-		if (KeyTable[P2Down]) IOPortA = IOPortA & 0xfd;
-		if (KeyTable[P2Up]) IOPortA = IOPortA & 0xfe;
-		if (KeyTable[P2Fire]) InputLatch[1] = 0x00;
+		if (KeyTable&P2Right) IOPortA = IOPortA & 0xf7;
+		if (KeyTable&P2Left) IOPortA = IOPortA & 0xfb;
+		if (KeyTable&P2Down) IOPortA = IOPortA & 0xfd;
+		if (KeyTable&P2Up) IOPortA = IOPortA & 0xfe;
+		if (KeyTable&P2Fire) InputLatch[1] = 0x00;
 	}
 
 	if (JoystickEnabled)
@@ -229,33 +322,33 @@ void DoPaddle_L()
 		KeyRepeat0 = 0;
 		KeyRepeat1 = 0;
 
-		if (KeyTable[P1Right])
+		if (KeyTable&P1Right)
 		{
 			KeyRepeat0 = 1;
 			if (Charge[0] > (PaddleRepeat0 >> 1))
 				Charge[0] -= (PaddleRepeat0 >> 1);
 		}
-		if (KeyTable[P1Left])
+		if (KeyTable&P1Left)
 		{
 			KeyRepeat0 = 1;
 			if ((Charge[0] + (PaddleRepeat0 >> 1)) < TRIGMAX)
 				Charge[0] += (PaddleRepeat0 >> 1);
 		}
-		if (KeyTable[P1Up])
+		if (KeyTable&P1Up)
 		{
 			KeyRepeat1 = 1;
 			if (Charge[1] > (PaddleRepeat1 >> 1))
 				Charge[1] -= (PaddleRepeat1 >> 1);
 		}
-		if (KeyTable[P1Down])
+		if (KeyTable&P1Down)
 		{
 			KeyRepeat1 = 1;
 			if ((Charge[1] + (PaddleRepeat1 >> 1)) < TRIGMAX)
 				Charge[1] += (PaddleRepeat1 >> 1);
 		}
 
-		if (KeyTable[P1Fire]) Button[0] = 1;
-		if (KeyTable[P1BoosterBG]) Button[1] = 1;
+		if (KeyTable&P1Fire) Button[0] = 1;
+		if (KeyTable&P1BoosterBG) Button[1] = 1;
 	}
 
 	if (MouseEnabled)
@@ -424,33 +517,33 @@ void DoPaddle_R()
 		KeyRepeat0 = 0;
 		KeyRepeat1 = 0;
 
-		if (KeyTable[P2Right])
+		if (KeyTable&P2Right)
 		{
 			KeyRepeat0 = 1;
 			if (Charge[0] > (PaddleRepeat0 >> 1))
 				Charge[0] -= (PaddleRepeat0 >> 1);
 		}
-		if (KeyTable[P2Left])
+		if (KeyTable&P2Left)
 		{
 			KeyRepeat0 = 1;
 			if ((Charge[0] + (PaddleRepeat0 >> 1)) < TRIGMAX)
 				Charge[0] += (PaddleRepeat0 >> 1);
 		}
-		if (KeyTable[P2Up])
+		if (KeyTable&P2Up)
 		{
 			KeyRepeat1 = 1;
 			if (Charge[1] > (PaddleRepeat1 >> 1))
 				Charge[1] -= (PaddleRepeat1 >> 1);
 		}
-		if (KeyTable[P2Down])
+		if (KeyTable&P2Down)
 		{
 			KeyRepeat1 = 1;
 			if ((Charge[1] + (PaddleRepeat1 >> 1)) < TRIGMAX)
 				Charge[1] += (PaddleRepeat1 >> 1);
 		}
 
-		if (KeyTable[P2Fire]) Button[0] = 1;
-		if (KeyTable[P2BoosterBG]) Button[1] = 1;
+		if (KeyTable&P2Fire) Button[0] = 1;
+		if (KeyTable&P2BoosterBG) Button[1] = 1;
 	}
 
 	if (MouseEnabled)
@@ -596,27 +689,27 @@ void DoKeypad_L()
 	
 	if (!(IOPortA & 0x80))
 	{
-		if (KeyTable[P1PadPound]) InputLatch[0] = 0;
-		if (KeyTable[P1PadStar]) ChargeTrigger0[0] = CHARGEMAX;
-		if (KeyTable[P1Pad0]) ChargeTrigger0[1] = CHARGEMAX;
+		if (KeyTable&P1PadPound) InputLatch[0] = 0;
+		if (KeyTable&P1PadStar) ChargeTrigger0[0] = CHARGEMAX;
+		if (KeyTable&P1Pad0) ChargeTrigger0[1] = CHARGEMAX;
 	}
 	if (!(IOPortA & 0x40))
 	{
-		if (KeyTable[P1Pad9]) InputLatch[0] = 0;
-		if (KeyTable[P1Pad7]) ChargeTrigger0[0] = CHARGEMAX;
-		if (KeyTable[P1Pad8]) ChargeTrigger0[1] = CHARGEMAX;
+		if (KeyTable&P1Pad9) InputLatch[0] = 0;
+		if (KeyTable&P1Pad7) ChargeTrigger0[0] = CHARGEMAX;
+		if (KeyTable&P1Pad8) ChargeTrigger0[1] = CHARGEMAX;
 	}
 	if (!(IOPortA & 0x20))
 	{
-		if (KeyTable[P1Pad6]) InputLatch[0] = 0;
-		if (KeyTable[P1Pad4]) ChargeTrigger0[0] = CHARGEMAX;
-		if (KeyTable[P1Pad5]) ChargeTrigger0[1] = CHARGEMAX;
+		if (KeyTable&P1Pad6) InputLatch[0] = 0;
+		if (KeyTable&P1Pad4) ChargeTrigger0[0] = CHARGEMAX;
+		if (KeyTable&P1Pad5) ChargeTrigger0[1] = CHARGEMAX;
 	}
 	if (!(IOPortA & 0x10))
 	{
-		if (KeyTable[P1Pad3]) InputLatch[0] = 0;
-		if (KeyTable[P1Pad1]) ChargeTrigger0[0] = CHARGEMAX;
-		if (KeyTable[P1Pad2]) ChargeTrigger0[1] = CHARGEMAX;
+		if (KeyTable&P1Pad3) InputLatch[0] = 0;
+		if (KeyTable&P1Pad1) ChargeTrigger0[0] = CHARGEMAX;
+		if (KeyTable&P1Pad2) ChargeTrigger0[1] = CHARGEMAX;
 	}
 }
 
@@ -628,27 +721,27 @@ void DoKeypad_R()
 	
 	if (!(IOPortA & 0x08))
 	{
-		if (KeyTable[P2PadPound]) InputLatch[1] = 0;
-		if (KeyTable[P2PadStar]) ChargeTrigger0[2] = CHARGEMAX;
-		if (KeyTable[P2Pad0]) ChargeTrigger0[3] = CHARGEMAX;
+		if (KeyTable&P2PadPound) InputLatch[1] = 0;
+		if (KeyTable&P2PadStar) ChargeTrigger0[2] = CHARGEMAX;
+		if (KeyTable&P2Pad0) ChargeTrigger0[3] = CHARGEMAX;
 	}
 	if (!(IOPortA & 0x04))
 	{
-		if (KeyTable[P2Pad9]) InputLatch[1] = 0;
-		if (KeyTable[P2Pad7]) ChargeTrigger0[2] = CHARGEMAX;
-		if (KeyTable[P2Pad8]) ChargeTrigger0[3] = CHARGEMAX;
+		if (KeyTable&P2Pad9) InputLatch[1] = 0;
+		if (KeyTable&P2Pad7) ChargeTrigger0[2] = CHARGEMAX;
+		if (KeyTable&P2Pad8) ChargeTrigger0[3] = CHARGEMAX;
 	}
 	if (!(IOPortA & 0x02))
 	{
-		if (KeyTable[P2Pad6]) InputLatch[1] = 0;
-		if (KeyTable[P2Pad4]) ChargeTrigger0[2] = CHARGEMAX;
-		if (KeyTable[P2Pad5]) ChargeTrigger0[3] = CHARGEMAX;
+		if (KeyTable&P2Pad6) InputLatch[1] = 0;
+		if (KeyTable&P2Pad4) ChargeTrigger0[2] = CHARGEMAX;
+		if (KeyTable&P2Pad5) ChargeTrigger0[3] = CHARGEMAX;
 	}
 	if (!(IOPortA & 0x01))
 	{
-		if (KeyTable[P2Pad3]) InputLatch[1] = 0;
-		if (KeyTable[P2Pad1]) ChargeTrigger0[2] = CHARGEMAX;
-		if (KeyTable[P2Pad2]) ChargeTrigger0[3] = CHARGEMAX;
+		if (KeyTable&P2Pad3) InputLatch[1] = 0;
+		if (KeyTable&P2Pad1) ChargeTrigger0[2] = CHARGEMAX;
+		if (KeyTable&P2Pad2) ChargeTrigger0[3] = CHARGEMAX;
 	}
 }
 
@@ -660,9 +753,9 @@ void DoDriving_L()
 
 	if (KeyboardEnabled)
 	{
-		if (KeyTable[P1Right]) count++;
-		if (KeyTable[P1Left]) count--;
-		if (KeyTable[P1Fire]) InputLatch[0] = 0x00;
+		if (KeyTable&P1Right) count++;
+		if (KeyTable&P1Left) count--;
+		if (KeyTable&P1Fire) InputLatch[0] = 0x00;
 	}
 
 	if (MouseEnabled)
@@ -708,9 +801,9 @@ void DoDriving_R()
 
 	if (KeyboardEnabled)
 	{
-		if (KeyTable[P2Right]) count++;
-		if (KeyTable[P2Left]) count--;
-		if (KeyTable[P2Fire]) InputLatch[1] = 0x00;
+		if (KeyTable&P2Right) count++;
+		if (KeyTable&P2Left) count--;
+		if (KeyTable&P2Fire) InputLatch[1] = 0x00;
 	}
 
 	if (MouseEnabled)
@@ -1269,7 +1362,16 @@ void Controls()
 /* allow picture shifting only every couple of frames */
 	static int CtrlSkipCount = 0;
 
-	if (GamePaused && !GameReallyPaused)
+//	if (KeyTable&Pause) 
+	if ((KeyTable&KEY_L) && (KeyTable&KEY_R)) 
+	{
+		GamePaused = 1;			// pause game 
+		GameReallyPaused = 1;
+		gui();
+	}
+
+//	if (GamePaused && !GameReallyPaused)
+	if (GamePaused )
 	{
 		if (StartInGUI)
 		{
@@ -1361,14 +1463,9 @@ void Controls()
 		GameReallyPaused = 0;
 		ROMLoaded = 0;
 	}
+*/
 
-	if (KeyTable[KeyBackSpace]) 
-	{
-		GamePaused = 1;			// pause game 
-		GameReallyPaused = 1;
-		KeyTable[KeyBackSpace] = 0;
-	}
-
+/*
 	if ((KeyTable[KeyEnter])&&(!KeyTable[KeyAlt])) 
 	{
 		GamePaused = 0;			// resume game 
@@ -1608,12 +1705,12 @@ void Controls()
 */
 // handle VCS console switches 	
 	IOPortB = IOPortB | 0x03;	// turn on Select and Reset bits 
-	if (KeyTable[ResetKey]) 
+	if (KeyTable&ResetKey) 
 	{
 		IOPortB = IOPortB & 0xfe;	/* bit 0 = RESET */
 		set_status("RESET");
 	}
-	if (KeyTable[SelectKey]) 
+	if (KeyTable&SelectKey) 
 	{
 		IOPortB = IOPortB & 0xfd;	/* bit 1 = SELECT */
 		set_status("SELECT");
@@ -1633,32 +1730,32 @@ void Controls()
 //	}
 
 
-	if (KeyTable[P0Easy]) 
+	if (KeyTable&P0Easy) 
 	{
 		IOPortB = IOPortB & 0xbf;	/* bit 6 = P0 difficulty */
 		set_status("Player 0 Easy");
 	}
-	if (KeyTable[P0Hard]) 
+	if (KeyTable&P0Hard) 
 	{
 		IOPortB = IOPortB | 0x40;
 		set_status("Player 0 Hard");
 	}
-	if (KeyTable[P1Easy]) 
+	if (KeyTable&P1Easy) 
 	{
 		IOPortB = IOPortB & 0x7f;	/* bit 7 = P1 difficulty */
 		set_status("Player 1 Easy");
 	}
-	if (KeyTable[P1Hard]) 
+	if (KeyTable&P1Hard) 
 	{
 		IOPortB = IOPortB | 0x80;
 		set_status("Player 1 Hard");
 	}
-	if (KeyTable[BWKey]) 
+	if (KeyTable&BWKey) 
 	{
 		IOPortB = IOPortB & 0xf7;	/* bit 3 = COLOR / BW */
 		set_status("Black and White");
 	}
-	if (KeyTable[ColorKey]) 
+	if (KeyTable&ColorKey) 
 	{
 		IOPortB = IOPortB | 0x08;
 		set_status("Color");

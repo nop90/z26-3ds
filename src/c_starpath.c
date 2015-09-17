@@ -38,6 +38,27 @@
 #include "srv.h"
 #include "c_cpuhand.h"
 
+dd SP_Scheme[8][2] = { /* table of bankswitch schemes */
+	{2 * 0x800,	3 * 0x800},
+	{0 * 0x800,	3 * 0x800},
+	{2 * 0x800,	0 * 0x800},
+	{0 * 0x800,	2 * 0x800},
+	{2 * 0x800,	3 * 0x800},
+	{1 * 0x800,	3 * 0x800},
+	{2 * 0x800,	1 * 0x800},
+	{1 * 0x800,	2 * 0x800}
+};
+
+dd SPSlice[2] = { 0, 3 * 0x800 };
+
+dd SP_PrevAdr = 0;
+
+/* byte(s) to write to RAM: */
+db SP_RamByte = 0;
+
+db SP_WriteEnable = 0;
+db SP_AddressCount = 7;
+
 
 /*
 	Starpath initialization

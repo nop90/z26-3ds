@@ -10,6 +10,9 @@
 #include "video.h"
 #include "text.h"
 
+int video_current = 0;	/* currently selected GUI option */
+int exit_video = 0;		/* exit video menu */
+
 void set_screen_string() {
 	if (FullScreen)		sprintf(screen_data, "Full Screen");
 	else				sprintf(screen_data, "Window");
@@ -192,8 +195,9 @@ void video_gui() {
 		draw_gui(video_gui_items, video_current);
 		
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		

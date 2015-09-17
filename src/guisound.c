@@ -89,8 +89,9 @@ void sound_gui() {
 		draw_gui(sound_gui_items, sound_current);
 		
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		

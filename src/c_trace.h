@@ -8,7 +8,7 @@
 #ifndef __C_TRACE_H__
 #define __C_TRACE_H__
 
-dd debugflag = 0;
+dd debugflag;
 
 void TraceInstruction(void);
 void ShowSCWrite(void);

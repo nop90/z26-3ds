@@ -7,7 +7,7 @@
 
 #include "globals.h"
 
-dd match=0;
+dd match;
 //SDLKey matched[100];
 dw matched[100];
 
@@ -16,15 +16,13 @@ dw matched[100];
 #define FT_DIRS 0
 #define FT_FILES 1
 
-static int filesread = 0;
+static int filesread;
 static char *file_list[MAX_ENTS+1];
 static char file_names[(MAX_ENTS+1)*(MAX_LEN+1)];
 
-int window_line = 0;
-int curfile = 0;
-int first_filelist = 1;
-
-
+int window_line;
+int curfile;
+int first_filelist;
 
 void directory_failed();
 void get_list(int file_type);

@@ -7,6 +7,7 @@
 #include "text.h"
 #include "video.h"
 #include "srv.h"
+#include "font.h"
 
 void clrscr() {
 	int i;

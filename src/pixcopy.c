@@ -17,11 +17,11 @@ void PixCopy32()
 	dd *ptr = (dd*) screen_pixels;
 	dd ptr_inc = srv_pitch/4 - pixelspread;
 
-	i = tiawidth/4;
+	i = tiawidth; // /4;
 	while (i--)
 	{
-		if (* (dd*) source != * (dd*) prev)
-		{
+//		if (* (dd*) source != * (dd*) prev)
+//		{
 			p=4;
 			while (p--)
 			{
@@ -33,12 +33,12 @@ void PixCopy32()
 				};
 				dest += pixelspread;
 			}
-		}
-		else
-		{
-			source += 4; dest += pixelspread*4;
-		}
-		prev += 4;
+//		}
+//		else
+//		{
+//			source += 4; dest += pixelspread*4;
+//		}
+//		prev += 4;
 	}
 }
 
@@ -49,22 +49,22 @@ void FastPixCopy32()
 {
 	int i;
 	db *source = emu_pixels;
-	db *prev = emu_pixels_prev;
+//	db *prev = emu_pixels_prev;
 	dd *dest = (dd*) screen_pixels;
 
 	i = tiawidth/4;
 	while (i--)
 	{
-		if (* (dd*) source != * (dd*) prev)
-		{
+//		if (* (dd*) source != * (dd*) prev)
+//		{
 			*dest++ = srv_colortab_hi[*source++]; ++source;
 			*dest++ = srv_colortab_hi[*source++]; ++source;
-		}
-		else
-		{
-			source += 4; dest += 2;
-		}
-		prev += 4;
+//		}
+//		else
+//		{
+//			source += 4; dest += 2;
+//		}
+//		prev += 4;
 	}
 }
 
@@ -83,8 +83,8 @@ void PixCopy32_2()
 	i = tiawidth/4;
 	while (i--)
 	{
-		if (* (dd*) source != * (dd*) prev)
-		{
+//		if (* (dd*) source != * (dd*) prev)
+//		{
 			p=4;
 			while (p--)
 			{
@@ -94,12 +94,12 @@ void PixCopy32_2()
 				*(dest++ + ptr_inc) = pixel;
 				++source;
 			}
-		}
-		else
-		{
-			source += 4; dest += 4;
-		}
-		prev += 4;
+//		}
+//		else
+//		{
+//			source += 4; dest += 4;
+//		}
+//		prev += 4;
 	}
 }
 

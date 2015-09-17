@@ -13,13 +13,16 @@
 #include "mouse.h"
 #include "kidvid.h"
 
-
-//#include "icon.c"  // needed???
-//#include "sdlopengl.c" // todo: move in video what needed
-
-
-
 //SDL_Joystick *JoystickTable[16];
+
+//sf2d_texture *srv_screen = NULL;
+//sf2d_texture *small_screen = NULL;
+//sf2d_texture *large_screen = NULL;
+//sf2d_texture *tiny_screen = NULL;
+
+db screen_buffer_count = 0;
+db srv_done = 0;
+dd odd = 0;		/* is the frame number odd? -- for interlaced modes */
 
 
 void z26_3ds_Init()
@@ -35,19 +38,25 @@ void z26_3ds_Init()
 */
 	
 //	screen_info = SDL_GetVideoInfo();
+
 	screen_bpp = 32 ; // screen_info->vfmt->BitsPerPixel;
 	
 //	gl_InitOpenGL();
-	screen_width = 400; //screen_surface->w;
+
+	sf2d_init_advanced(SF2D_GPUCMD_DEFAULT_SIZE, SF2D_TEMPPOOL_DEFAULT_SIZE*4);
+
+	screen_width = 320; //screen_surface->w;
 	screen_height = 240; // screen_surface->h;
 
 	srv_pitch = 512*4 ; //srv_screen->pitch;
 	
-	small_screen = sf2d_create_texture(512, 512, TEXFMT_RGBA8, SF2D_PLACE_RAM);   //SDL_CreateRGBSurfaceFrom(&texture_buffer, 512, 512, 32, 4*512, 0, 0, 0, 0);
-	large_screen = sf2d_create_texture(1024, 1024, TEXFMT_RGBA8, SF2D_PLACE_RAM); //SDL_CreateRGBSurfaceFrom(&texture_buffer, 1024, 1024, 32, 4*1024, 0, 0, 0, 0);
-	tiny_screen =  sf2d_create_texture(256, 256, TEXFMT_RGBA8, SF2D_PLACE_RAM);   //SDL_CreateRGBSurfaceFrom(&texture_buffer, 256, 256, 32, 4*256, 0, 0, 0, 0);
+//	small_screen = sf2d_create_texture(512, 512, TEXFMT_RGBA8, SF2D_PLACE_RAM);   //SDL_CreateRGBSurfaceFrom(&texture_buffer, 512, 512, 32, 4*512, 0, 0, 0, 0);
+//	large_screen = sf2d_create_texture(1024, 1024, TEXFMT_RGBA8, SF2D_PLACE_RAM); //SDL_CreateRGBSurfaceFrom(&texture_buffer, 1024, 1024, 32, 4*1024, 0, 0, 0, 0);
+//	tiny_screen =  sf2d_create_texture(256, 256, TEXFMT_RGBA8, SF2D_PLACE_RAM);   //SDL_CreateRGBSurfaceFrom(&texture_buffer, 256, 256, 32, 4*256, 0, 0, 0, 0);
 	
-	srv_screen = small_screen;
+	srv_screen = sf2d_create_texture(320, 240, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+	srv_gui = sf2d_create_texture(320, 240, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+//	srv_screen = sf2d_create_texture(256, 256, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 
 	screen_buffer_count = 0;
 	
@@ -62,9 +71,12 @@ void z26_3ds_Init()
 void z26_3ds_quit()
 {
   // !!!!! Free textues and quit services
-    sf2d_free_texture(small_screen);
-    sf2d_free_texture(large_screen);
-    sf2d_free_texture(tiny_screen);
+//    sf2d_free_texture(small_screen);
+//    sf2d_free_texture(large_screen);
+//    sf2d_free_texture(tiny_screen);
+
+    sf2d_free_texture(srv_screen);
+    sf2d_fini();
 
 }
 
@@ -118,6 +130,8 @@ void srv_Events()
 */
 
     hidScanInput();
+	KeyTable = hidKeysHeld();
+/*	
     u32 keys = hidKeysHeld();
 	
 		KeyTable[KEY_SELECT] = (keys & KEY_SELECT) ? 0x80 : 0;
@@ -132,7 +146,7 @@ void srv_Events()
 		KeyTable[KEY_Y] = (keys & KEY_Y) ? 0x80 : 0;
 		KeyTable[KEY_L] = (keys & KEY_L) ? 0x80 : 0;
 		KeyTable[KEY_R] = (keys & KEY_R) ? 0x80 : 0;
-		
+*/		
 	circlePosition pos;
 	hidCircleRead(&pos);
 	

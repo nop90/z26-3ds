@@ -5,8 +5,8 @@
 #ifndef __GUIVIDEO_H__
 #define __GUIVIDEO_H__
 
-int video_current = 0;	/* currently selected GUI option */
-int exit_video = 0;		/* exit video menu */
+int video_current;	/* currently selected GUI option */
+int exit_video;		/* exit video menu */
 
 char startline_data[52];
 char screen_data[52];

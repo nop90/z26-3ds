@@ -14,6 +14,7 @@ int	FPSflips = 0;
 double	CurrentFPS = 0.0;
 double	FPStime = 0.0;
 
+float screen_scale = 2.5;
 int screen_width = 0;	/* physical width */
 int screen_height = 0;	/* physical height */
 int screen_bpp = 32;		/* bits per pixel */
@@ -120,7 +121,7 @@ void def_LoadDefaults(void)
 	GameOffset = 0;
 	theme = 0x50;			// aqua
 	VideoMode = 0xff;
-	FullScreen = 1;
+	FullScreen = 0; // 1;
 	Narrow = 0;
 	Tall = 0;
 	CFirst = 0xffff;
@@ -188,7 +189,8 @@ void InitCVars(void)
 	VBlankOn=0;
 	LinesInFrame=262;
 	BailoutLine=500;	/* 320, 360, 380 */
-	for (i=0; i<KEYTABLESIZE; i++) KeyTable[i] = 0;
+//	for (i=0; i<KEYTABLESIZE; i++) KeyTable[i] = 0;
+	KeyTable = 0;
 	p0_mask = 0xff;
 	p1_mask = 0xff;
 	m0_mask = 0xff;

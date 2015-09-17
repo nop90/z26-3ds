@@ -4,26 +4,34 @@
 
 /* 20040530 bkw */
 
+#include <string.h>
 #include <3ds.h>
 #include "gui.h"
 #include "srv.h"
 #include "flip.h"
-
-#define GUI_WIDTH 38
-#define FONT_WIDTH 6
-#define FONT_HEIGHT 9
+#include "cli.h"
+#include "video.h"
 
 #include "guiutil.h"
 #include "gui_sort.h"
 #include "guifilelist.h"
 #include "guivideo.h"
-#include "guigame.c"
-#include "guisound.c"
-// #include "guitiming.c"
-#include "guitweaks.c"
-#include "guiinterface.c"
-#include "guidebug.c"
-#include "guiabout.c"
+#include "guigame.h"
+#include "guisound.h"
+#include "guitweaks.h"
+#include "guiinterface.h"
+
+#define GUI_WIDTH 38
+#define FONT_WIDTH 6
+#define FONT_HEIGHT 9
+
+
+/*** global variables */
+
+int exit_gui = 0;	/* handlers set this to 1 to exit the GUI */
+int gui_current = 0;	/* currently selected GUI option */
+
+gui_entry *current_gui_items = NULL;
 
 void gui_SetVideoMode()
 {
@@ -68,25 +76,31 @@ void hand_load_rom()
 	run_rom();
 }
 
+void resume_rom() {
+	if(GameReallyPaused) {
+		GamePaused = 0;			// resume game 
+		GameReallyPaused = 0;
+		srv_reset_timing();		
+	} 
+}
 void hand_exit() {
-	ExitEmulator = 128;
+
+	ExitEmulator = 128;		
 	exit_gui = 1;
 	GamePaused = 0;
 }
 
 /* The main GUI menu. See the definition of gui_entry above. */
 gui_entry gui_items[] = {
-	{ " Play a Game ", NULL, 0, hand_load_rom, NULL /* hand_exit */ },
+	{ " Select a Game ", NULL, 0, hand_load_rom, NULL },
+	{ " Resume Game", NULL, 0, resume_rom, NULL },
 	{ " ", NULL, 0, NULL, NULL },
 	{ " Game ", NULL, 0, game_gui, NULL },
 	{ " Video ", NULL, 0, video_gui, NULL },
 	{ " Sound ", NULL, 0, sound_gui, NULL },
-//	{ " Timing ", NULL, 0, timing_gui, NULL },
 	{ " Interface ", NULL, 0, interface_gui, NULL },
 	{ " Tweaks ", NULL, 0, tweaks_gui, NULL },
-	{ " Debug ", NULL, 0, debug_gui, NULL },
-	{ " About ", NULL, 0, about_gui, NULL },
-	{ " ", NULL, 0, NULL, NULL },
+//	{ " ", NULL, 0, NULL, NULL },
 	{ " Exit ", NULL, 0, hand_exit, NULL },
 	{ NULL, NULL, 0, NULL, NULL }		// last element must always be this
 };
@@ -136,10 +150,10 @@ void gui() {
 		status_timer = 0;
 		sprintf(msg,"%s", Z26_RELEASE);
 		draw_gui(current_gui_items, gui_current);
-		
 //		SDL_WaitEvent(&ev);		/* TODO: respond to SDL_QUIT events */
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); // &ev);
 		if(action == GUI_NO_ACTION) continue;
 		

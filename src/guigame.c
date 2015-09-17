@@ -10,7 +10,7 @@
 #include "video.h"
 #include "cli.h"
 #include "srv.h"
-#include "guifilelist.c"
+#include "guifilelist.h"
 
 int game_current = 0;	/* currently selected GUI option */
 int exit_game = 0;	/* exit video menu */
@@ -321,7 +321,6 @@ gui_entry game_gui_items[] = {
 	{ " P0 Difficulty...: %s ", p0diff_data, 0, hand_p0diff, hand_p0diff },
 	{ " P1 Difficulty...: %s ", p1diff_data, 0, hand_p1diff, hand_p1diff },
 	{ " Console B/W.....: %s ", consoleBW_data, 0, hand_consoleBW, hand_consoleBW },
-	{ " ", NULL, 0, NULL, NULL },
 	{ " Bankswitch......: %s", bank_data, 0, hand_bank_inc, hand_bank_dec },
 	{ " Palette.........: %s ", palette_data, 0, hand_palette_inc, hand_palette_dec },
 	{ " Left Controller.: %s", left_control_data, 0, hand_lctrl_inc, hand_lctrl_dec },
@@ -364,8 +363,9 @@ void game_gui() {
 		draw_gui(game_gui_items, game_current);
 		
 //		SDL_WaitEvent(&ev);	/* TODO: respond to SDL_QUIT events */
-	    hidScanInput();
-		while(!(keys = hidKeysDown()));
+		hidScanInput();
+		while(!hidKeysHeld()) hidScanInput();
+		keys = hidKeysHeld();
 		action = gui_navigation(keys); //&ev);
 		if(action == GUI_NO_ACTION) continue;
 		

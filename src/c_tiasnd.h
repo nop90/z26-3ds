@@ -55,59 +55,28 @@
 
 int TSB_result;
 
-/*
- Initialze the bit patterns for the polynomials.
+db Bit4[15];
+db Bit5[31];
+db Bit5T[31];
+db Div31[31];
+db Div6[6];
+dd Samp_n_cnt;
+dd Samp_n_max;
+db D6[2];
+db P4[2];
+db P5[2];
+db AUDC[2];
+db AUDF[2];
+db AUDV[2];
+db Outvol[2];
+db Div_n_cnt[2];
+db Div_n_max[2];
 
- The 4bit and 5bit patterns are the identical ones used in the tia chip.
- Though the patterns could be packed with 8 bits per byte, using only a
- single bit per byte keeps the math simple, which is important for
- efficient processing.
-*/
+dd P9_sreg[2];
+dd prev_sample;
+db next_sample;
 
-db Bit4[] = { 0,1,1,0,0,1,0,1,0,0,0,0,1,1,1 };
-db Bit5[] = { 0,0,0,0,0,1,1,1,0,0,1,0,0,0,1,0,1,0,1,1,1,1,0,1,1,0,1,0,0,1,1 };
-
-/*
- 1 = toggle output in 5 bit poly - used when poly5 clocks other outputs
-*/
-
-db Bit5T[] = { 1,0,0,0,0,1,0,0,1,0,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,1,0 };
-
-/*
- The 'Div by 31' counter is treated as another polynomial because of
- the way it operates.  It does not have a 50% duty cycle, but instead
- has a 13:18 ratio (of course, 13+18 = 31).  This could also be
- implemented by using counters.
-*/
-
-db Div31[] = { 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0 };
-
-db Div6[] = { 0,1,0,0,1,0 };
-
-/*
- The sample output is treated as another divide by N counter.
- For better accuracy, the Samp_n_cnt has a fixed binary decimal point
- which has 8 binary digits to the right of the decimal point.
-*/
-
-dd Samp_n_cnt = 0;
-dd Samp_n_max = 0;
-
-
-db D6[] = { 0, 0 };
-db P4[] = { 0, 0 };
-db P5[] = { 0, 0 };
-db AUDC[] = { 0, 0 };
-db AUDF[] = { 0, 0 };
-db AUDV[] = { 0, 0 };
-db Outvol[] = { 0, 0 };
-db Div_n_cnt[] = { 0, 0 };
-db Div_n_max[] = { 0, 0 };
-
-dd P9_sreg[] = { 1, 1 };
-dd prev_sample = 0;
-db next_sample = 0;
-
+void (* AUDC_Jumptab[16])(int chan);
 
 void TSB_Always_High(int chan);
 	
@@ -132,47 +101,6 @@ void TSB_Div6_Pure(int chan);
 void TSB_Div31_Div6(int chan);
 	
 void TSB_Poly5_Div6(int chan);
-/*
-AUDC_Jumptab:   ; dword           ; HEX  D3 D2 D1 D0    Clock Source    Clock Modifier    Source Pattern
-		;                   --- -------------  --------------  ----------------  ----------------
-        dd      TSB_Ch0done      ;   0    0  0  0  0    3.58 MHz/114 ->  none  (pure)  ->      none
-        dd      TSB_Poly4        ;   1    0  0  0  1    3.58 MHz/114 ->  none  (pure)  ->   4-bit poly
-        dd      TSB_Div31_Poly4  ;   2    0  0  1  0    3.58 MHz/114 ->  divide by 31  ->   4-bit poly
-        dd      TSB_Poly5_Poly4  ;   3    0  0  1  1    3.58 MHz/114 ->   5-bit poly   ->   4-bit poly
-        dd      TSB_Pure         ;   4    0  1  0  0    3.58 MHz/114 ->  none  (pure)  ->   pure  (~Q)
-        dd      TSB_Pure         ;   5    0  1  0  1    3.58 MHz/114 ->  none  (pure)  ->   pure  (~Q)
-        dd      TSB_Div31_Pure   ;   6    0  1  1  0    3.58 MHz/114 ->  divide by 31  ->   pure  (~Q)
-;       dd      TSB_Poly5_Pure   ;   7    0  1  1  1    3.58 MHz/114 ->   5-bit poly   ->   pure  (~Q)
-        dd      TSB_Poly5        ;   7    0  1  1  1    3.58 MHz/114 ->  none  (pure)  ->   5-bit poly
-        dd      TSB_Poly9        ;   8    1  0  0  0    3.58 MHz/114 ->  none  (pure)  ->   9-bit poly
-        dd      TSB_Poly5        ;   9    1  0  0  1    3.58 MHz/114 ->  none  (pure)  ->   5-bit poly
-;       dd      TSB_Div31_Poly5  ;   A    1  0  1  0    3.58 MHz/114 ->  divide by 31  ->   5-bit poly
-        dd      TSB_Div31_Pure   ;   A    1  0  1  0    3.58 MHz/114 ->  divide by 31  ->   pure  (~Q)
-        dd      TSB_Poly5_Poly5  ;   B    1  0  1  1    3.58 MHz/114 ->   5-bit poly   ->   5-bit poly
-        dd      TSB_Div6_Pure    ;   C    1  1  0  0    3.58 MHz/114 ->  divide by 6   ->   pure  (~Q)
-        dd      TSB_Div6_Pure    ;   D    1  1  0  1    3.58 MHz/114 ->  divide by 6   ->   pure  (~Q)
-        dd      TSB_Div31_Div6   ;   E    1  1  1  0    3.58 MHz/114 ->  divide by 31  ->   divide by 6
-        dd      TSB_Poly5_Div6   ;   F    1  1  1  1    3.58 MHz/114 ->   5-bit poly   ->   divide by 6
-*/
-
-void (* AUDC_Jumptab[])(int chan) = {
-	TSB_Always_High,
-	TSB_Poly4,
-	TSB_Div31_Poly4,
-	TSB_Poly5_Poly4,
-	TSB_Pure,
-	TSB_Pure,
-	TSB_Div31_Pure,
-	TSB_Poly5,
-	TSB_Poly9,
-	TSB_Poly5,
-	TSB_Div31_Pure,
-	TSB_Poly5_Poly5,
-	TSB_Div6_Pure,
-	TSB_Div6_Pure,
-	TSB_Div31_Div6,
-	TSB_Poly5_Div6
-};
 
 void Init_Tiasnd();
 
