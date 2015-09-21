@@ -47,18 +47,18 @@ void PixCopy32()
 
 void FastPixCopy32()
 {
-	int i;
+/*	int i;
 	db *source = emu_pixels;
 //	db *prev = emu_pixels_prev;
 	dd *dest = (dd*) screen_pixels;
 
-	i = tiawidth/4;
+	i = tiawidth; // /4;
 	while (i--)
 	{
 //		if (* (dd*) source != * (dd*) prev)
 //		{
-			*dest++ = srv_colortab_hi[*source++]; ++source;
-			*dest++ = srv_colortab_hi[*source++]; ++source;
+			*dest++ = srv_colortab_hi[*source++]; //++source;
+//			*dest++ = srv_colortab_hi[*source++]; ++source;
 //		}
 //		else
 //		{
@@ -66,6 +66,7 @@ void FastPixCopy32()
 //		}
 //		prev += 4;
 	}
+*/
 }
 
 

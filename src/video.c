@@ -18,68 +18,32 @@
 
 void ClearScreenBuffers()
 {
-	memset(RealScreenBuffer1, 0,    MaxLines*tiawidth);
-	memset(RealScreenBuffer2, 0, MaxLines*tiawidth); // memset(RealScreenBuffer2, 0x80, MaxLines*tiawidth);
-	memset(RealScreenBuffer3, 0,    MaxLines*tiawidth);
-	memset(RealScreenBuffer4, 0, MaxLines*tiawidth); // memset(RealScreenBuffer4, 0x80, MaxLines*tiawidth);
-
-	memset(texture_buffer, 0, 4*1024*1024);
+	int i;
+	u32 * fb;
+	fb= (u32*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	for (i=0; i<400*240;i++) fb[i] = 0xff;
+	fb= (u32*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+	for (i=0; i<320*240;i++) fb[i] = 0xff;
+    gfxFlushBuffers();
+    gfxSwapBuffers();
+	fb= (u32*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	for (i=0; i<400*240;i++) fb[i] = 0xff;
+	fb= (u32*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+	for (i=0; i<320*240;i++) fb[i] = 0xff;
 }
 
 
 void CreateScreen()	// need to be able to force video mode change
 {
-//	gl_CreateScreen();
-/*
-int	vsize = (screen_height/MaxLines)*MaxLines;
-int	vpos, hoffset, maxheight;
-int	maxstretch = (screen_width * 3) / 40;
 
-	if (vsize+Tall*4 > screen_height)	maxheight = screen_height;
-	else					maxheight = vsize+Tall*4;
-		
-	if (Narrow > maxstretch)		hoffset = maxstretch*4;
-	else					hoffset = Narrow*4;
-
-	vpos = (screen_height - maxheight)/2;
-
-//	SDL_WM_SetCaption(FileName, FileName);
-	
-//	if (MouseRude|FullScreen)
-//		SDL_ShowCursor(SDL_DISABLE);
-//	else	
-//		SDL_ShowCursor(SDL_ENABLE);
-*/
 }
 
 
 
 void DrawScreen() {
 
-	sf2d_texture_tile32(srv_screen);
-	sf2d_texture_tile32(srv_gui);
-
-
-    sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	
-	if (FullScreen)
-		sf2d_draw_texture_part_scale(srv_screen, 0, 0, 0, 0, 160, 240, 2.5, 1); //1.24);
-	else
-		sf2d_draw_texture_part_scale(srv_screen, 40, 0, 0, 0, 160, 240, 2, 1);
-	sf2d_end_frame();
-
-    sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-
-	sf2d_draw_texture(srv_gui, 0, 0);
-
-	sf2d_end_frame();
-    gfxFlushBuffers();
-
-    gfxFlushBuffers();
-
-    sf2d_swapbuffers();
-
-
+        gfxFlushBuffers();
+        gfxSwapBuffers();
 }
 
 /*
@@ -96,7 +60,7 @@ void srv_SetPalette()
 	dd med = (Depth + 100)/2;
 
 	db red, grn, blu;
-	RGB32_Color palette[256];
+//	RGB32_Color palette[256];
 
 	GeneratePalette();
 	for ( i=0; i<128; i++)
@@ -109,9 +73,9 @@ void srv_SetPalette()
 		palette[i].g = grn;
 		palette[i].b = blu;
 */
-		srv_colortab_hi[i] =  0xff000000 | (blu<<16) |  (grn<<8) |red ; // SDL_MapRGB(srv_screen->format, red, grn, blu);
-		srv_colortab_med[i] = 0xff000000 | (((blu*med)/100)<<16) |  (((grn*med)/100)<<8) | ((red*med)/100) ; // SDL_MapRGB(srv_screen->format, (red*med)/100, (grn*med)/100, (blu*med)/100);
-		srv_colortab_low[i] = 0xff000000 | (((blu*hi)/100)<<16) |  (((grn*hi)/100)<<8) | ((red*hi)/100) ; // SDL_MapRGB(srv_screen->format, (red*hi)/100,  (grn*hi)/100,  (blu*hi)/100);
+		srv_colortab_hi[i] =  0xff | (red<<24) |  (grn<<16) | (blu<<8) ;
+		srv_colortab_med[i] = 0xff | (((red*med)/100)<<24) |  (((grn*med)/100)<<16) | (((red*med)/100)<<8) ; 
+		srv_colortab_low[i] = 0xff | (((red*hi)/100)<<24) |  (((grn*hi)/100)<<16) | (((red*hi)/100)<<8) ; 
 	}
 }
 
@@ -202,54 +166,51 @@ void srv_CopyScreen()
 	Horiz = 0;//(width - pixelspread*tiawidth) / 2;
 //	if (width == 256) Horiz = (width - pixelspread*tiawidth/2) / 2;
 
-	srv_buffer = srv_screen->data; //srv_screen->pixels;
+//	srv_buffer = srv_screen->data; //srv_screen->pixels;
 	srv_pitch = 512*4; // srv_screen->pitch;
 
-	emu_pixels = ScreenBuffer;
-	emu_pixels_prev = ScreenBufferPrev;
-	prev_emu_pixels = PrevScreenBuffer;
-	prev_emu_pixels_prev = PrevScreenBufferPrev;
+//	emu_pixels = ScreenBuffer;
+//	emu_pixels_prev = ScreenBufferPrev;
+//	prev_emu_pixels = PrevScreenBuffer;
+//	prev_emu_pixels_prev = PrevScreenBufferPrev;
 
-	screen_pixels = srv_buffer + Horiz*bpp + (Vert)*srv_pitch;
+//	screen_pixels = srv_buffer + Horiz*bpp + (Vert)*srv_pitch;
 	
 	if (status_timer > 0) 
 		{
 			show_transient_status();
 			status_timer--;
 		}
-		else if (ShowLineCount && !GamePaused)
+	else if (ShowLineCount && !GamePaused)
 		{
 			show_scanlines();
 		}
 	
 	lines2draw = scanlinespread;
 
-	copy = FastPixCopy32;
-//	copy = PixCopy32_2;
+//	copy = FastPixCopy32;
+
 /*
-	if (scanlinespread == 1) 
-		copy = FastPixCopy32;
-	else if (DoInterlace)
-	{
-		lines2draw = scanlinespread / 2;
-		if (odd & 1) screen_pixels += lines2draw * srv_pitch;
-	}
-	else if (scanlinespread == 2)
-		copy = PixCopy32_2;
-	else if (scanlinespread == 4)
-		copy = PixCopy32_4;
-*/
 	for (i=0; i<MaxLines; ++i)
 	{	
 		(*copy)();
 		screen_pixels += scanlinespread * srv_pitch;
 		emu_pixels += tiawidth;
-		emu_pixels_prev += tiawidth;
-		prev_emu_pixels += tiawidth;
-		prev_emu_pixels_prev += tiawidth;
+//		emu_pixels_prev += tiawidth;
+//		prev_emu_pixels += tiawidth;
+//		prev_emu_pixels_prev += tiawidth;
+	}
+*/
+/*
+	for (i=0; i<MaxLines; ++i)
+	{	
+		(*copy)();
+		screen_pixels += scanlinespread * srv_pitch;
+		emu_pixels += tiawidth;
 	}
 
 	srv_screen->tiled = 0;
+*/
 	DrawScreen();   
 	
 	srv_Flip();
@@ -257,7 +218,7 @@ void srv_CopyScreen()
 //	memset(srv_buffer, 0, 512*256*4);
 
 	
-	pixelspread = oldpixelspread;
+//	pixelspread = oldpixelspread;
 }
 
 
@@ -280,15 +241,15 @@ void gui_CopyScreen()
 	Vert = 0;//(height - scanlinespread*MaxLines) / 2;
 	Horiz = 0;//(width - pixelspread*tiawidth) / 2;
 
-	srv_buffer = srv_gui->data; //srv_screen->pixels;
+//	srv_buffer = srv_gui->data; //srv_screen->pixels;
 	srv_pitch = 512*4; // srv_screen->pitch;
 
-	emu_pixels = ScreenBuffer;
-	emu_pixels_prev = ScreenBufferPrev;
-	prev_emu_pixels = PrevScreenBuffer;
-	prev_emu_pixels_prev = PrevScreenBufferPrev;
+//	emu_pixels = ScreenBuffer;
+//	emu_pixels_prev = ScreenBufferPrev;
+//	prev_emu_pixels = PrevScreenBuffer;
+//	prev_emu_pixels_prev = PrevScreenBufferPrev;
 
-	screen_pixels = srv_buffer ;//+ Horiz*bpp + (Vert)*srv_pitch;
+//	screen_pixels = srv_buffer ;//+ Horiz*bpp + (Vert)*srv_pitch;
 	
 	if (status_timer > 0) 
 		{
@@ -302,7 +263,7 @@ void gui_CopyScreen()
 	
 	lines2draw = scanlinespread;
 
-	copy = PixCopy32_2;
+//	copy = PixCopy32_2;
 /*
 	if (scanlinespread == 1) 
 		copy = FastPixCopy32;
@@ -316,17 +277,19 @@ void gui_CopyScreen()
 	else if (scanlinespread == 4)
 		copy = PixCopy32_4;
 */
+/*
 	for (i=0; i<MaxLines; ++i)
 	{	
 		(*copy)();
 		screen_pixels += scanlinespread * srv_pitch;
 		emu_pixels += tiawidth;
-		emu_pixels_prev += tiawidth;
-		prev_emu_pixels += tiawidth;
-		prev_emu_pixels_prev += tiawidth;
+//		emu_pixels_prev += tiawidth;
+//		prev_emu_pixels += tiawidth;
+//		prev_emu_pixels_prev += tiawidth;
 	}
 
-	srv_gui->tiled = 0;
+//	srv_gui->tiled = 0;
+*/
 	DrawScreen();   
 	
 	srv_Flip();

@@ -51,23 +51,19 @@ int main()
 {
 	
 	
-//	u8  isN3DS = 0;
+//	isN3DS = 0;
 
 //	aptOpenSession();
-//	APT_SetAppCpuTimeLimit(NULL, 30); // enables syscore usage
+//	APT_SetAppCpuTimeLimit(NULL, 80); // enables syscore usage
 //	aptCloseSession();
 
 //	APT_CheckNew3DS(NULL, &isN3DS);
 	
-	    // Init console for text output
-
     sdmcArchive = (FS_archive){ARCH_SDMC, (FS_path){PATH_EMPTY, 1, (u8*)""}};
     FSUSER_OpenArchive(NULL, &sdmcArchive);
 
 	z26_3ds_Init(); // !!
 	
-//    consoleInit(GFX_BOTTOM, NULL); // !!!!!
-
 	chdir("sdmc://Atari2600") ;
 
 	srand(time(0));
@@ -80,19 +76,9 @@ int main()
 
 	c_emulator();		   /* call emulator */
 
-//	if(GrabInput)
-//		SDL_WM_GrabInput(SDL_GRAB_OFF);
-	
-//	if(TraceEnabled && (zlog != NULL)) {
-//		fprintf(zlog, "Exiting emulator with status %d\n", MessageCode);
-//		fflush(zlog);
-//		fclose(zlog);
-//	}
-
 	srv_sound_off();
 
-//	SDL_Quit();
-	z26_3ds_quit(); // !!
+	z26_3ds_quit();!
 
 	fflush(parmfp);
 	fclose(parmfp);

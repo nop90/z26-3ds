@@ -13,13 +13,6 @@
 #include "mouse.h"
 #include "kidvid.h"
 
-//SDL_Joystick *JoystickTable[16];
-
-//sf2d_texture *srv_screen = NULL;
-//sf2d_texture *small_screen = NULL;
-//sf2d_texture *large_screen = NULL;
-//sf2d_texture *tiny_screen = NULL;
-
 db screen_buffer_count = 0;
 db srv_done = 0;
 dd odd = 0;		/* is the frame number odd? -- for interlaced modes */
@@ -27,7 +20,11 @@ dd odd = 0;		/* is the frame number odd? -- for interlaced modes */
 
 void z26_3ds_Init()
 {
-	Init_SoundQ();
+	
+
+
+	gfxInit(GSP_RGBA8_OES,GSP_RGBA8_OES,0); 
+	gfxSet3D(false);
 
 /*
 	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0 ) /// !!!
@@ -43,41 +40,33 @@ void z26_3ds_Init()
 	
 //	gl_InitOpenGL();
 
-	sf2d_init_advanced(SF2D_GPUCMD_DEFAULT_SIZE, SF2D_TEMPPOOL_DEFAULT_SIZE*4);
+//	sf2d_init_advanced(SF2D_GPUCMD_DEFAULT_SIZE, SF2D_TEMPPOOL_DEFAULT_SIZE*4);
 
 	screen_width = 320; //screen_surface->w;
 	screen_height = 240; // screen_surface->h;
 
 	srv_pitch = 512*4 ; //srv_screen->pitch;
 	
-//	small_screen = sf2d_create_texture(512, 512, TEXFMT_RGBA8, SF2D_PLACE_RAM);   //SDL_CreateRGBSurfaceFrom(&texture_buffer, 512, 512, 32, 4*512, 0, 0, 0, 0);
-//	large_screen = sf2d_create_texture(1024, 1024, TEXFMT_RGBA8, SF2D_PLACE_RAM); //SDL_CreateRGBSurfaceFrom(&texture_buffer, 1024, 1024, 32, 4*1024, 0, 0, 0, 0);
-//	tiny_screen =  sf2d_create_texture(256, 256, TEXFMT_RGBA8, SF2D_PLACE_RAM);   //SDL_CreateRGBSurfaceFrom(&texture_buffer, 256, 256, 32, 4*256, 0, 0, 0, 0);
-	
-	srv_screen = sf2d_create_texture(320, 240, TEXFMT_RGBA8, SF2D_PLACE_RAM);
-	srv_gui = sf2d_create_texture(320, 240, TEXFMT_RGBA8, SF2D_PLACE_RAM);
-//	srv_screen = sf2d_create_texture(256, 256, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+//	srv_screen = sf2d_create_texture(320, 240, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+//	srv_gui = sf2d_create_texture(320, 240, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 
 	screen_buffer_count = 0;
 	
-	ScreenBuffer = RealScreenBuffer1;
-	ScreenBufferPrev = RealScreenBuffer2;
-        PrevScreenBuffer = RealScreenBuffer3;
-        PrevScreenBufferPrev = RealScreenBuffer4;
+//	RealScreenBuffer1= srv_screen->data;
+	
+//	ScreenBuffer = RealScreenBuffer1;
+//	ScreenBufferPrev = RealScreenBuffer2;
+//       PrevScreenBuffer = RealScreenBuffer3;
+//        PrevScreenBufferPrev = RealScreenBuffer4;
 	
 	ClearScreenBuffers();
+
+	Init_SoundQ();
 }
 
 void z26_3ds_quit()
 {
-  // !!!!! Free textues and quit services
-//    sf2d_free_texture(small_screen);
-//    sf2d_free_texture(large_screen);
-//    sf2d_free_texture(tiny_screen);
-
-    sf2d_free_texture(srv_screen);
-    sf2d_fini();
-
+ 	gfxExit();
 }
 
 

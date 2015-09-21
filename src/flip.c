@@ -33,7 +33,7 @@ void srv_reset_timing()
 void srv_Flip()
 {
 	double Now = srv_get_microseconds();
-
+	
 	if (Ticks == 0.0)	Ticks = Now;
 	if (Flips++ == 0)	FirstFlipTime = Now;
 	if (FPStime == 0.0)	FPStime = Now;
@@ -54,6 +54,8 @@ void srv_Flip()
 	}
 	
 //	ctr_SwapBuffers(); // !!!!!!!!! use sf2dlib 
+
+/*
 	screen_buffer_count = (screen_buffer_count + 1) & 0x03;
 	
 	if (DoInterlace)
@@ -108,6 +110,7 @@ void srv_Flip()
 			break;
 		}
 	}
+*/
 }
 
 /**

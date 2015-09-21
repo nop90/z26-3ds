@@ -23,6 +23,7 @@
 #include "c_soundq.h"
 #include "c_tialine.h"
 #include "c_cpu.h"
+#include "srv.h"
 
 /* just to be able to compile with trace */
 dd P0_Position = 0;
@@ -40,6 +41,7 @@ dd TIA_HMOVE_Setup = 0;	// it takes several steps to setup an HMOVE
 dd TIA_HMOVE_Clock = 16;	// how many HMOVE clocks since last HMOVE command
 db TIA_HMOVE_Latches = 0;	// are we done with HMOVE pulses
 db TIA_HMOVE_DoMove	= 0;	// do we need to apply more HMOVE pulses
+
 /*
 for continuity with TIA_Pixel_State:
 P0 = 0x20
@@ -284,7 +286,7 @@ db TIA_Priority[0x10000];
 db TIA_Pixels[160];
 dd TIA_Colours[16] = {8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8};
 dw *TIA_Pixel_PTR;
-dd *MyDisplayPointer;
+//dd *MyDisplayPointer;
 
 void Init_TIA(void){
 	
@@ -891,6 +893,8 @@ void Init_TIA(void){
 
 void CatchUpPixels(void){
 
+	dw PixColor;
+
 	if(TIA_Do_Output){
 		if(TIA_VBLANK){
 			for(CountLoop = TIA_Last_Pixel; CountLoop < ((RClock * 3) + TIA_Delayed_Write); CountLoop++){
@@ -1040,10 +1044,9 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-				*DisplayPointer = 0;
-				DisplayPointer++;
-						 
-		
+//				DisplayPointer[posinline] = 0xff000000;
+				posinline+=480;
+
 						/* The PF reflect bit gets only checked at center screen. */
 						if(CTRLPF_PF_Reflect) TIA_REFPF_Flag = 40;
 						else TIA_REFPF_Flag = 0;
@@ -1157,8 +1160,8 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-				*DisplayPointer = 0;
-				DisplayPointer++;
+//				DisplayPointer[posinline] = 0xff000000;
+				posinline+=480;
 						
 					}	
 				}else if(LoopCount < 68){
@@ -1281,8 +1284,9 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-			*DisplayPointer = 0;
-			DisplayPointer++;
+//				DisplayPointer[posinline] = 0xff000000;
+				posinline+=480;
+
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
 		
 					
@@ -1509,8 +1513,8 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-				*DisplayPointer = 0;
-				DisplayPointer++;
+//				DisplayPointer[posinline] = 0xff000000;
+				posinline+=480;
 					
 				}	
 			}
@@ -1685,15 +1689,17 @@ void CatchUpPixels(void){
 							We simulate it be setting the colour of that half pixel to PF colour.
 						*/
 						if(TIA_Pixel_State == 0x01)	/* only playfield active? */
-							*DisplayPointer =
-								/* TODO: make this endian safe */
-								(TIA_Colour_Table[P0_COLOUR] & 0x00ff) | (TIA_Colour_Table[PF_COLOUR] & 0xff00);
-						else *DisplayPointer =
+							PixColor = ((TIA_Colour_Table[P0_COLOUR] & 0x00ff) | (TIA_Colour_Table[PF_COLOUR] & 0xff00));
+						else 
+							PixColor = 
 							TIA_Colour_Table[TIA_Score_Priority_Table[(LoopCount - 68) / 80][TIA_Pixel_State]];
-					}else *DisplayPointer =
+					} else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
-					
-					DisplayPointer++; 
+
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+					posinline+=240;
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
+					posinline+=240;
 		
 						/* The PF reflect bit gets only checked at center screen. */
 						if(CTRLPF_PF_Reflect) TIA_REFPF_Flag = 40;
@@ -1822,12 +1828,15 @@ void CatchUpPixels(void){
 						/* let user disable objects */
 					TIA_Pixel_State &= TIA_Mask_Objects;
 					/* playfield doesn't use score colouring mode when it has display priority */
-					if(CTRLPF_Score) *DisplayPointer =
+					if(CTRLPF_Score) PixColor = 
 						TIA_Colour_Table[TIA_Score_Priority_Table[(LoopCount - 68) / 80][TIA_Pixel_State]];
-					else *DisplayPointer =
+					else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 					
-					DisplayPointer++;
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+					posinline+=240;
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
+					posinline+=240;
 					}	
 				}else if(LoopCount < 68){
 		
@@ -1959,8 +1968,9 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-			*DisplayPointer = 0;
-			DisplayPointer++;
+//			DisplayPointer[posinline] = 0xff000000;
+			posinline+=480;
+
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
 		
 					
@@ -2211,12 +2221,15 @@ void CatchUpPixels(void){
 					/* let user disable objects */
 					TIA_Pixel_State &= TIA_Mask_Objects;
 					/* playfield doesn't use score colouring mode when it has display priority */
-					if(CTRLPF_Score) *DisplayPointer =
+					if(CTRLPF_Score) PixColor = 
 						TIA_Colour_Table[TIA_Score_Priority_Table[(LoopCount - 68) / 80][TIA_Pixel_State]];
-					else *DisplayPointer =
+					else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 					
-					DisplayPointer++;
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+					posinline+=240;
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
+					posinline+=240;
 				}	
 			}
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;

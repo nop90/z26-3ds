@@ -3,12 +3,15 @@
 */
 
 #include <string.h>
+#include <3DS.h>
 #include "globals.h"
 
 double	ctrticks = 0;
 double	Ticks = 0.0;
 double	FirstFlipTime = 0.0;
 
+db isN3DS = 0;
+db skFrame = 0;
 int	Flips = 0;
 int	FPSflips = 0;
 double	CurrentFPS = 0.0;
@@ -212,7 +215,7 @@ void InitCVars(void)
 	
 	WByte = 0;
 
-	DisplayPointer = (dw*) ScreenBuffer;
+	DisplayPointer = (dd*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 }
 
 

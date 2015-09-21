@@ -20,6 +20,8 @@ double	ctrticks;
 double	Ticks;
 double	FirstFlipTime;
 
+db isN3DS;
+
 int	Flips;
 int	FPSflips;
 double	CurrentFPS;
@@ -61,10 +63,10 @@ int CartSize;			/* gets cart size */
 db CartRom[0x8000f];
 db PCXPalette[384];		/* palette information goes here */
 
-db *ScreenBuffer;			/* pointer to screen buffer (set to RealScreenBuffer 1-4) */
-db *ScreenBufferPrev;		/* pointer to screen buffer for previous frame (RSB 1-4)*/
-db *PrevScreenBuffer;		/* previous pointer to screen buffer */
-db *PrevScreenBufferPrev; /* previous pointer to previous screen buffer */
+//db *ScreenBuffer;			/* pointer to screen buffer (set to RealScreenBuffer 1-4) */
+//db *ScreenBufferPrev;		/* pointer to screen buffer for previous frame (RSB 1-4)*/
+//db *PrevScreenBuffer;		/* previous pointer to screen buffer */
+//db *PrevScreenBufferPrev; /* previous pointer to previous screen buffer */
 
 dd LinesInFrame;		/* # of lines in last frame */
 dd PrevLinesInFrame;	/* # of lines in frame before that */
@@ -102,14 +104,15 @@ db ShowFPS;
 db SoundQ[65537];		/* sound queue */
 dd SQ_Max;
 
+dd *RealScreenBuffer1;
+
 /* make the output buffers big enough for 500 scanlines with tiawidth of 320 */
+//db *RealScreenBuffer1[320*501];
+//db RealScreenBuffer2[320*501];
+//db RealScreenBuffer3[320*501];
+//db RealScreenBuffer4[320*501];
 
-db RealScreenBuffer1[320*501];
-db RealScreenBuffer2[320*501];
-db RealScreenBuffer3[320*501];
-db RealScreenBuffer4[320*501];
-
-dd texture_buffer[1024*1024];
+//dd texture_buffer[1024*1024];
 
 /* paddle charges (can be 1-240) */
 
@@ -253,9 +256,8 @@ int OurBailoutLine; /* Initial bailout line (fine tune if exceeded) */
 
 db WByte;		/* byte to write */
 
-dw *DisplayPointer; /* should init to RealScreenBuffer 
-					   this is 16-bit because emulator core stores
-					   2 bytes at a time most of the time.*/
+dd *DisplayPointer; // should init to RealScreenBuffer 
+dd posinline;
 
 #define CYCLESPERSCANLINE 76
 #define TRIGMIN 1

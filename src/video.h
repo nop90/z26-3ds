@@ -8,14 +8,16 @@
 
 #include "globals.h"
 
-dd texture_buffer[1024*1024];
+//dd texture_buffer[1024*1024];
 
+/*
 typedef struct{
   db r;
   db g;
   db b;
   db unused;
 } RGB32_Color;
+*/
 
 void ClearScreenBuffers();
 void CreateScreen();

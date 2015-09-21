@@ -11,19 +11,15 @@
 
 void clrscr() {
 	int i;
-	db *sp;
-	
-	sp = ScreenBuffer;
-	for(i=0; i<MaxLines*tiawidth; i++)
-		*sp++ = theme;	// *theme*
-		
-	sp = ScreenBufferPrev;	// force screen to update
-	for(i=0; i<MaxLines*tiawidth; i++)
-		*sp++ = 0x80;
+	u32 * fb;
+	fb= (u32*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+	for (i=0; i<320*240;i++) fb[i] = srv_colortab_hi[theme];
 }
 
 int get_offset() {		// put FPS display at bottom of screen
 
+	return(3);
+/*
 	switch (height)
 	{
 	default:   return(0);
@@ -35,6 +31,7 @@ int get_offset() {		// put FPS display at bottom of screen
 	case 900:  return(-3);
 	case 1024: return(1);
 	}
+*/
 }
 
 
@@ -42,11 +39,11 @@ int get_offset() {		// put FPS display at bottom of screen
 ** our "screen" is 53 characters wide and 28 characters high
 */
 
-void draw_char(char ch, char* font, char* surface, int fontheight, int row, int col, int fg, int bg)
+void draw_char(char ch, char* font, dd* surface, int fontheight, int row, int col, int fg, int bg)
 {
 	int i,j;
 	char *fp;	/* font pointer */
-	char *sp;	/* surface pointer */
+	dd sp;	/* surface pointer */
 	char fbyte;	/* font byte */
 	
 //	row += get_offset();
@@ -54,28 +51,43 @@ void draw_char(char ch, char* font, char* surface, int fontheight, int row, int 
 	fp = font + 8*ch;
 	
 	// do an extra row at the beginning
-	sp = surface + tiawidth*(row) + col;
+	sp = 240*(col) + 240-row;
 	for (j=0; j<6; j++) 
 	{ 
-		*sp++ = bg; 
-		if (width == 256) *sp++ = bg;
+		surface[sp] = srv_colortab_hi[bg]; 
+		sp+=240;
+		if (width == 256)
+		{
+			surface[sp] = srv_colortab_hi[bg];
+			sp+=240;
+		}
 	}
 
 	for (i=1; i<=fontheight; i++)
 	{
-		sp = surface + tiawidth*(row+i) + col;
+		sp = 240*col + 240-(row+i);
 		fbyte = *fp++;		/* pick up a font byte */
 		for (j=0; j<6; j++)
 		{
 			if (fbyte & 0x80)
 			{
-				*sp++ = fg;
-				if (width == 256) *sp++ = fg;
+				surface[sp] = srv_colortab_hi[fg];
+				sp+=240;
+				if (width == 256)
+				{
+					surface[sp] = srv_colortab_hi[fg];
+					sp+=240;
+				}
 			}
 			else
 			{	
-				*sp++ = bg;
-				if (width == 256) *sp++ = bg;
+				surface[sp] = srv_colortab_hi[bg]; 
+				sp+=240;
+				if (width == 256)
+				{
+					surface[sp] = srv_colortab_hi[bg];
+					sp+=240;
+				}
 			}
 			fbyte <<= 1;
 		}
@@ -100,7 +112,7 @@ void draw_msg_at_color(int x, int y, int fg, int bg) {
 	{
 		ch = *mp++;
 		if (ch == 0) break;
-		draw_char(ch, simplex5, (char *) ScreenBuffer, 8, row, col, fg, bg);
+		draw_char(ch, simplex5, (dd *) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL), 8, row, col, fg, bg);
 		col += 6;
 		if (width == 256) col += 6;
 	}
@@ -128,7 +140,7 @@ void draw_long_msg_at_color(int x, int y, int fg, int bg) {
 			col = 2;	// 2
 		}
 		if (ch == '\n') continue;
-		draw_char(ch, simplex5, (char *) ScreenBuffer, 8, row, col, fg, bg);
+		draw_char(ch, simplex5, (dd *) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL), 8, row, col, fg, bg);
 		col += 6;
 	}
 }
@@ -159,7 +171,7 @@ void hilite_char_at(char ch, int x, int y) {
 	if (fg) { fg &= 0xf; fg += theme; }
 	if (bg) { bg &= 0xf; bg += theme; }
 
-	draw_char(ch, simplex5, (char *) ScreenBuffer, 8, row, col - 6, fg, bg);
+	draw_char(ch, simplex5, (dd *) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL), 8, row, col - 6, fg, bg);
 }
 
 

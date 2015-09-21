@@ -80,6 +80,7 @@ void resume_rom() {
 	if(GameReallyPaused) {
 		GamePaused = 0;			// resume game 
 		GameReallyPaused = 0;
+		exit_gui = 1;
 		srv_reset_timing();		
 	} 
 }

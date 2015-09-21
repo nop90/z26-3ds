@@ -33,17 +33,19 @@
 */
 
 void BlankBufferEnd(void) {
+/*
 	int i;
 	dd *PTR;
 	
 	PTR = (dd*) DisplayPointer;
 	if(LinesInFrame > 100){	
 		if((LinesInFrame - CFirst) < MaxLines){
-			for(i=0; i < ((MaxLines - LinesInFrame + CFirst) * 80); i++){
-				*PTR++ = 0;
+			for(i=0; i < ((MaxLines - LinesInFrame + CFirst) * 512); i++){ /// era 80 fisso ???? forse tiawidth???
+				*PTR++ = 0xff000000;
 			}
 		}
 	}
+*/
 }
 
 
@@ -54,10 +56,13 @@ void BlankBufferEnd(void) {
 void ScanFrame() {
 
 	/* Reset display pointer */
-	DisplayPointer = (dw*) ScreenBuffer;
+	DisplayPointer = (dd*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 
+//	if(Frame&0X1) Frame++;
+	
 	do {
 		/* Generate a raster line */
+		posinline=(240-ScanLine) + 30 + 40*240;
 		nTIALineTo();
 
 		ScanLine++;
@@ -85,7 +90,7 @@ void ScanFrame() {
 
 	/* Done with frame. Blank rest of screen buffer, update PrevFrame, and return to caller. */
 
-	BlankBufferEnd();
+//	BlankBufferEnd();
 	PrevFrame = Frame;
 }
 
@@ -116,11 +121,13 @@ void c_emulator(void) {
 		if(ResetEmulator) Reset_emulator();
 
 		srv_Events();
-		if(srv_done) break;	/* SDL got a 'close window' message */
+//		if(srv_done) break;	/* SDL got a 'close window' message */
 
 		ScanFrame();
+
 		Controls();
-		srv_CopyScreen();
+//		if(Frame&0x1) 
+		srv_CopyScreen(); 
 		while(GamePaused) Controls();
 	}
 	

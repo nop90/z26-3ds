@@ -892,11 +892,11 @@ void DoLightgun_L()
 	
 //	MLG_Xpos  += 60;
 
-	ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos + 1] = MLG_Colour;
-	ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos - 1] = MLG_Colour;
-	ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos + 320] = MLG_Colour;
-	if (MLG_Ypos * 320 + MLG_Xpos > 320)
-		ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos - 320] = MLG_Colour;
+//	ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos + 1] = MLG_Colour;
+//	ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos - 1] = MLG_Colour;
+//	ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos + 320] = MLG_Colour;
+//	if (MLG_Ypos * 320 + MLG_Xpos > 320)
+//		ScreenBuffer[MLG_Ypos * 320 + MLG_Xpos - 320] = MLG_Colour;
 }
 
 void DoLightgun_R()
@@ -1383,7 +1383,7 @@ void Controls()
 	}
 
 	srv_Events();			/* process SDL controller events */
-	srv_get_mouse_movement();	/* poll mouse */
+//	srv_get_mouse_movement();	/* poll mouse */
 
 //	KeyTable[KeyAlt] = KeyTable[KeyLAlt] | KeyTable[KeyRAlt] | KeyTable[KeyLMeta] | KeyTable[KeyRMeta];
 //	KeyTable[KeyCtrl] = KeyTable[KeyLCtrl] | KeyTable[KeyRCtrl];
@@ -1819,6 +1819,7 @@ void Controls()
 		break;
 	}
 
+/*
 	switch (RightController)
 	{
 		case JS:
@@ -1876,7 +1877,7 @@ void Controls()
 			IOPortA_UnusedBits = IOPortA_UnusedBits & 0xff;
 		break;
 	}
-
+*/
 	SwapPorts();
 
 	/* grounded controller pins can be read even when SWACNT is set to output */

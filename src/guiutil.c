@@ -177,6 +177,7 @@ int gui_handle_action(int action, int *ptr_exit_gui, gui_entry *current_gui_item
 		default:
 			break;
 	}
+	svcSleepThread (250000000);
 	return(gui_current);
 }
 

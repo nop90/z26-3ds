@@ -239,6 +239,8 @@ int file_selector(char *result) {
 		first_filelist = 0;
 	}
 
+	while(hidKeysHeld()) hidScanInput();
+
 	while(!picked) {
 		int action;
 
@@ -247,10 +249,11 @@ int file_selector(char *result) {
 		hidScanInput();
 		while(!hidKeysHeld()) hidScanInput();
 		keys = hidKeysHeld();
+		
 		action = gui_navigation(keys); //&ev);
 
-//		if(action == GUI_NO_ACTION)
-//			continue;
+		if(action == GUI_NO_ACTION)
+			continue;
 
 		switch(action) 
 		{
@@ -378,6 +381,7 @@ int file_selector(char *result) {
 			break;
 		}
 
+		svcSleepThread (250000000);
 //		SDL_WM_SetCaption(file_list[curfile], file_list[curfile]);
 
 	}
