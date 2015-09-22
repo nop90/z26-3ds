@@ -9,7 +9,7 @@
 
 void clrscr();
 int get_offset();
-void draw_char(char ch, char* font, dd* surface, int fontheight, int row, int col, int fg, int bg);
+void draw_char(char ch, char* font, dw* surface, int fontheight, int row, int col, int fg, int bg);
 void draw_msg_at_color(int x, int y, int fg, int bg);
 void draw_long_msg_at_color(int x, int y, int fg, int bg);
 void draw_msg_at(int x, int y);

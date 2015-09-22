@@ -13,7 +13,7 @@
 
 #include "globals.h"
 #include "c_riot.h"
-#include "c_trace.h"
+//#include "c_trace.h"
 #include "c_cpujam.h"
 
 db dummy_flag;	/* used by ROL and ROR */
@@ -7337,7 +7337,7 @@ void Reset(void){
 
 void do_Instruction(void){
 
-	if(TraceCount) TraceInstruction();
+//	if(TraceCount) TraceInstruction();
 	RCycles = 0;
 	AddressBus = reg_pc;
 	RClock++;	/* cycles for this scanline */
@@ -7371,7 +7371,7 @@ void do_Instruction_line(void){
 //		 	}
 		}
 
-		if(TraceCount) TraceInstruction();
+//		if(TraceCount) TraceInstruction();
 		RCycles = 0;
 		AddressBus = reg_pc;
 		RClock++;	/* cycles for this scanline */

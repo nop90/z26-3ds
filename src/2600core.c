@@ -11,7 +11,7 @@
 #include "controls.h"
 #include "sound.h"
 #include "carts.h"
-#include "c_trace.h"
+//#include "c_trace.h"
 #include "c_riot.h"
 #include "c_tialine.h"
 #include "c_tiasnd.h"
@@ -56,7 +56,7 @@ void BlankBufferEnd(void) {
 void ScanFrame() {
 
 	/* Reset display pointer */
-	DisplayPointer = (dd*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	DisplayPointer = (dw*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 
 //	if(Frame&0X1) Frame++;
 	

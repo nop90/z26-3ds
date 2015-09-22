@@ -215,7 +215,7 @@ void InitCVars(void)
 	
 	WByte = 0;
 
-	DisplayPointer = (dd*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	DisplayPointer = (dw*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 }
 
 

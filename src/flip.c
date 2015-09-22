@@ -40,7 +40,7 @@ void srv_Flip()
 
 	++FPSflips;
 
-	if (Now - FPStime > 4000000.0)	/* update FPS every 4 seconds or ... */
+	if (Now - FPStime > 1000000.0)	/* update FPS every 4 seconds or ... */
 	{	
 		CurrentFPS = (FPSflips * 1000000.0)/(Now - FPStime);
 		FPStime = Now;

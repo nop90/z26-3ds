@@ -11,8 +11,8 @@
 
 //SDL_Joystick *JoystickTable[16];
 
-sf2d_texture *srv_screen;
-sf2d_texture *srv_gui;
+//sf2d_texture *srv_screen;
+//sf2d_texture *srv_gui;
 //sf2d_texture *small_screen;
 //sf2d_texture *large_screen;
 //sf2d_texture *tiny_screen;
@@ -27,15 +27,15 @@ dd srv_pitch;
 dd Vert, Horiz;		/* offsets into window or video display where 2600 pixels are rendered in pixels*/
 dd width, height;	/* dimensions of current window or video display in pixels */
 
-db *screen_pixels;      /* pointer to display screen */
-db *emu_pixels;         /* pointer to current emulator buffer */
-db *emu_pixels_prev;    /* pointer to previous emulator buffer */
-db *prev_emu_pixels;	/* previous pointer to display screen */
-db *prev_emu_pixels_prev; /* previous pointer to previous emulator buffer */
+//db *screen_pixels;      /* pointer to display screen */
+//db *emu_pixels;         /* pointer to current emulator buffer */
+//db *emu_pixels_prev;    /* pointer to previous emulator buffer */
+//db *prev_emu_pixels;	/* previous pointer to display screen */
+//db *prev_emu_pixels_prev; /* previous pointer to previous emulator buffer */
 
-dd srv_colortab_hi[128];		/* for mapping atari 8-bit colors to 32-bit colors */
-dd srv_colortab_med[128];		/* for soft scanlines */
-dd srv_colortab_low[128];
+dw srv_colortab_hi[128];		/* for mapping atari 8-bit colors to 32-bit colors */
+dw srv_colortab_med[128];		/* for soft scanlines */
+dw srv_colortab_low[128];
 
 
 void z26_3ds_Init();

@@ -1044,7 +1044,7 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0xff000000;
+//				DisplayPointer[posinline] = 0x000000ff;
 				posinline+=480;
 
 						/* The PF reflect bit gets only checked at center screen. */
@@ -1160,7 +1160,7 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0xff000000;
+//				DisplayPointer[posinline] = 0x000000ff;
 				posinline+=480;
 						
 					}	
@@ -1284,7 +1284,7 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-//				DisplayPointer[posinline] = 0xff000000;
+//				DisplayPointer[posinline] = 0x000000ff;
 				posinline+=480;
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
@@ -1513,7 +1513,7 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0xff000000;
+//				DisplayPointer[posinline] = 0x000000ff;
 				posinline+=480;
 					
 				}	
@@ -1968,7 +1968,7 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-//			DisplayPointer[posinline] = 0xff000000;
+//			DisplayPointer[posinline] = 0x000000ff;
 			posinline+=480;
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;

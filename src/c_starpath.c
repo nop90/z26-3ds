@@ -32,7 +32,7 @@
 #include "globals.h"
 #include "cli.h"
 #include "text.h"
-#include "c_trace.h"
+//#include "c_trace.h"
 #include "c_banks.h"
 #include "c_starpath.h"
 #include "srv.h"
@@ -160,7 +160,7 @@ void SP_Q_Adr(void){
 			CartRom[SPSlice[(AddressBus & 0x800) >> 11] + (AddressBus & 0x7ff)]
 				= SP_RamByte;
 			SP_AddressCount = 7;
-			if(TraceCount) ShowSCWrite();
+//			if(TraceCount) ShowSCWrite();
 		}
 	}else if(AddressBus & 0x1000){
 		if(!(AddressBus & 0xf00)){
@@ -182,7 +182,8 @@ void SP_Q_Adr(void){
 
 void ReadSPlow(void){
 
-	if(!debugflag) SP_Q_Adr();
+//	if(!debugflag) 
+		SP_Q_Adr();
 	(* TIARIOTReadAccess[AddressBus & 0xfff])();
 }
 
@@ -194,7 +195,8 @@ void WriteSPlow(void){
 
 void ReadSPhigh(void){
 
-	if(!debugflag) SP_Q_Adr();
+//	if(!debugflag) 
+		SP_Q_Adr();
 	DataBus = 
 		CartRom[SPSlice[(AddressBus & 0x800) >> 11] + (AddressBus & 0x7ff)];
 }
@@ -220,7 +222,8 @@ void InitSP(void){
 
 void RBank_SP(void){
 
-	if(!debugflag) SP_Q_Adr();
+//	if(!debugflag) 
+		SP_Q_Adr();
 	if(!(AddressBus & 0x1000)) ReadHardware();
 	else DataBus = 
 		CartRom[SPSlice[(AddressBus & 0x800) >> 11] + (AddressBus & 0x7ff)];

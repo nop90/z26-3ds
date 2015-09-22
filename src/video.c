@@ -14,22 +14,22 @@
 #include "palette.h"
 #include "position.h"
 #include "text.h"
-#include "pixcopy.h"
+//#include "pixcopy.h"
 
 void ClearScreenBuffers()
 {
 	int i;
-	u32 * fb;
-	fb= (u32*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-	for (i=0; i<400*240;i++) fb[i] = 0xff;
-	fb= (u32*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-	for (i=0; i<320*240;i++) fb[i] = 0xff;
+	u16 * fb;
+	fb= (u16*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	for (i=0; i<400*240;i++) fb[i] = 0;
+	fb= (u16*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+	for (i=0; i<320*240;i++) fb[i] = 0;
     gfxFlushBuffers();
     gfxSwapBuffers();
-	fb= (u32*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-	for (i=0; i<400*240;i++) fb[i] = 0xff;
-	fb= (u32*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-	for (i=0; i<320*240;i++) fb[i] = 0xff;
+	fb= (u16*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	for (i=0; i<400*240;i++) fb[i] = 0;
+	fb= (u16*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+	for (i=0; i<320*240;i++) fb[i] = 0;
 }
 
 
@@ -58,24 +58,28 @@ void srv_SetPalette()
 		
 	dd hi = Depth;
 	dd med = (Depth + 100)/2;
-
 	db red, grn, blu;
 //	RGB32_Color palette[256];
 
 	GeneratePalette();
 	for ( i=0; i<128; i++)
 	{
-		red = PCXPalette[3*i];
-		grn = PCXPalette[3*i+1];
-		blu = PCXPalette[3*i+2];
+		red = PCXPalette[3*i]>>3;
+		grn = PCXPalette[3*i+1]>>3;
+		blu = PCXPalette[3*i+2]>>3;
 /*
 		palette[i].r = red;
 		palette[i].g = grn;
 		palette[i].b = blu;
 */
-		srv_colortab_hi[i] =  0xff | (red<<24) |  (grn<<16) | (blu<<8) ;
-		srv_colortab_med[i] = 0xff | (((red*med)/100)<<24) |  (((grn*med)/100)<<16) | (((red*med)/100)<<8) ; 
-		srv_colortab_low[i] = 0xff | (((red*hi)/100)<<24) |  (((grn*hi)/100)<<16) | (((red*hi)/100)<<8) ; 
+/*
+		srv_colortab_hi[i] =  0xf | (red<<11) |  (grn<<6) | (blu<<1) ;
+		srv_colortab_med[i] = 0xf | (((red*med)/100)<<11) |  (((grn*med)/100)<<6) | (((red*med)/100)<<1) ; 
+		srv_colortab_low[i] = 0xf | (((red*hi)/100)<<11) |  (((grn*hi)/100)<<6) | (((red*hi)/100)<<1) ; 
+*/
+		srv_colortab_hi[i] =  0x1 | (red<<11) |  (grn<<6) | (blu<<1) ;
+		srv_colortab_med[i] = 0x1 | (((red*med)/100)<<11) |  (((grn*med)/100)<<6) | (((red*med)/100)<<1) ; 
+		srv_colortab_low[i] = 0x1 | (((red*hi)/100)<<11) |  (((grn*hi)/100)<<6) | (((red*hi)/100)<<1) ; 
 	}
 }
 
@@ -181,7 +185,8 @@ void srv_CopyScreen()
 			show_transient_status();
 			status_timer--;
 		}
-	else if (ShowLineCount && !GamePaused)
+//	else if (ShowLineCount && !GamePaused)
+	else if (!GamePaused)
 		{
 			show_scanlines();
 		}
@@ -251,7 +256,7 @@ void gui_CopyScreen()
 
 //	screen_pixels = srv_buffer ;//+ Horiz*bpp + (Vert)*srv_pitch;
 	
-	if (status_timer > 0) 
+/*	if (status_timer > 0) 
 		{
 			show_transient_status();
 			status_timer--;
@@ -260,7 +265,7 @@ void gui_CopyScreen()
 		{
 			show_scanlines();
 		}
-	
+*/	
 	lines2draw = scanlinespread;
 
 //	copy = PixCopy32_2;

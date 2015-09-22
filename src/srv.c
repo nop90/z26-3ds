@@ -23,7 +23,7 @@ void z26_3ds_Init()
 	
 
 
-	gfxInit(GSP_RGBA8_OES,GSP_RGBA8_OES,0); 
+	gfxInit(GSP_RGB5_A1_OES,GSP_RGB5_A1_OES,0); 
 	gfxSet3D(false);
 
 /*

@@ -256,7 +256,7 @@ int OurBailoutLine; /* Initial bailout line (fine tune if exceeded) */
 
 db WByte;		/* byte to write */
 
-dd *DisplayPointer; // should init to RealScreenBuffer 
+dw *DisplayPointer; // should init to RealScreenBuffer 
 dd posinline;
 
 #define CYCLESPERSCANLINE 76
