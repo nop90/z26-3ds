@@ -284,6 +284,7 @@ void cli_InterpretParm(char *p)
 	case 'd':  	dsp = parm;				break;	// sound processing
 	case 'e':	Narrow = parm;			break;	// width adjustment
 	case 'h':	Tall = parm;			break;	// height adjustment
+	case 'F':	FrameSkip_Value = parm;	break;	// Frameskip value
 	case 'q':  	quiet = 1;				break;	// no sound
 	case 'S':	DoScanline = 1;			break;	// scanline display
 	case 'C':	theme = parm & 0x70;	break;	// color theme for the GUI
@@ -513,6 +514,7 @@ void cli_SaveParms()
 	if (dsp != 1)					fprintf(fp, "-d%1d ", dsp);
 	if (Narrow)						fprintf(fp, "-e%d ", Narrow);
 	if (Tall)						fprintf(fp, "-h%d ", Tall);
+	if (FrameSkip_Value)			fprintf(fp, "-F%d ", FrameSkip_Value);
 	if (SimColourLoss)				fprintf(fp, "-o ");
 	if (DoInterlace)				fprintf(fp, "-! ");
 	if (UserDepth != 60)			fprintf(fp, "-f%d ", UserDepth);

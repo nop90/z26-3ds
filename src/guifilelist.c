@@ -11,7 +11,7 @@
 #include "globals.h"
 #include "guiutil.h"
 #include "gui_sort.h"
-#include "guivideo.h"
+//#include "guivideo.h"
 #include "gui.h"
 #include "text.h"
 #include "video.h"

@@ -18,6 +18,8 @@ char enable_joystick_data[52];
 char enable_stelladaptor_data[52];
 char mouse_rude_data[52];
 char grab_input_data[52];
+char frameskip_data[52];
+
 
 void set_theme_string() {
 	switch(theme/16)
@@ -87,11 +89,24 @@ void hand_theme_dec() {
 	set_theme_string();
 }
 
+void FrameSkip_inc() {
+	if (FrameSkip_Value < 8) FrameSkip_Value++;
+	else FrameSkip_Value = 9;
+	sprintf(frameskip_data, "%d", FrameSkip_Value);
+}
+
+void FrameSkip_dec() {
+	if (FrameSkip_Value > 0) FrameSkip_Value--;
+	else FrameSkip_Value = 0;
+	sprintf(frameskip_data, "%d", FrameSkip_Value);
+}
+
 void hand_interface_exit() {
 	exit_interface = 1;
 }
 
 gui_entry interface_gui_items[] = {
+	{ " Frameskip..........: %s ", frameskip_data, 0, FrameSkip_inc, FrameSkip_dec },
 	{ " Show FPS...........: %s ", show_fps_data, 0, hand_show_fps, hand_show_fps },
 	{ " Theme..............: %s ", theme_data, 0, hand_theme_inc, hand_theme_dec },
 	{ " ", NULL, 0, NULL, NULL },
@@ -123,6 +138,8 @@ void interface_gui() {
 	set_yesno_string(mouse_rude_data, MouseRude);
 	set_yesno_string(grab_input_data, GrabInput);
 	set_theme_string();
+	sprintf(frameskip_data, "%d", FrameSkip_Value);
+
 	
 	exit_interface = 0;
 	while( !exit_interface ) {

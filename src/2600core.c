@@ -58,11 +58,9 @@ void ScanFrame() {
 	/* Reset display pointer */
 	DisplayPointer = (dw*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 
-//	if(Frame&0X1) Frame++;
-	
 	do {
 		/* Generate a raster line */
-		posinline=(240-ScanLine) + 30 + 40*240;
+		posinline= (240-ScanLine) + 25 + 40*240;
 		nTIALineTo();
 
 		ScanLine++;
@@ -98,6 +96,7 @@ void ScanFrame() {
 void Reset_emulator(void){
 	
 	ResetEmulator = 0;
+	FrameSkip_Counter=0;
 	InitData();
 	RecognizeCart();
 	SetupBanks();
@@ -126,9 +125,8 @@ void c_emulator(void) {
 		ScanFrame();
 
 		Controls();
-//		if(Frame&0x1) 
 		srv_CopyScreen(); 
-		while(GamePaused) Controls();
+//		while(GamePaused) Controls();
 	}
 	
 	srv_Cleanup();	/* shutdown SDL */

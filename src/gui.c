@@ -15,7 +15,7 @@
 #include "guiutil.h"
 #include "gui_sort.h"
 #include "guifilelist.h"
-#include "guivideo.h"
+//#include "guivideo.h"
 #include "guigame.h"
 #include "guisound.h"
 #include "guitweaks.h"
@@ -74,6 +74,7 @@ void hand_load_rom()
 		ROMLoaded = cli_LoadROM(newfile);
 	}
 	run_rom();
+	ResetEmulator = 1;	// let's always do this before running a game
 }
 
 void resume_rom() {
@@ -97,7 +98,7 @@ gui_entry gui_items[] = {
 	{ " Resume Game", NULL, 0, resume_rom, NULL },
 	{ " ", NULL, 0, NULL, NULL },
 	{ " Game ", NULL, 0, game_gui, NULL },
-	{ " Video ", NULL, 0, video_gui, NULL },
+//	{ " Video ", NULL, 0, video_gui, NULL },
 	{ " Sound ", NULL, 0, sound_gui, NULL },
 	{ " Interface ", NULL, 0, interface_gui, NULL },
 	{ " Tweaks ", NULL, 0, tweaks_gui, NULL },
@@ -118,7 +119,7 @@ void gui() {
 	
 	gui_SetVideoMode();
 	
-	ResetEmulator = 1;	// let's always do this before running a game
+//	ResetEmulator = 1;	// let's always do this before running a game
 
 	OldPaletteNumber = PaletteNumber;
 	if (PaletteNumber != UserPaletteNumber)
