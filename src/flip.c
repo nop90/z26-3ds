@@ -55,7 +55,7 @@ void srv_Flip()
 		FPSflips = 0;
 	}
 	
-	if(Now - PrevFrametime < Ticks_per_Frame/1000) svcSleepThread(Ticks_per_Frame/1000 - Now + PrevFrametime);
+	if(FPSLimit && (Now - PrevFrametime < Ticks_per_Frame/1000)) svcSleepThread(Ticks_per_Frame/1000 - Now + PrevFrametime);
 	PrevFrametime = Now;
 	if(FrameSkip_Counter>FrameSkip_Value) FrameSkip_Counter = 0;
 

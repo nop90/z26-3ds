@@ -10,8 +10,8 @@ dd TopLine = 0;    /* top line of display */
 dd BottomLine = 0; /* bottom line of display */
 
 void position_game() {
-	CFirst = 0; //DefaultCFirst;
-/*
+	CFirst = DefaultCFirst;
+
 	if(DefaultCFirst == 0xffff) 	// if no default first line to render
 	{
 		if(PaletteNumber > 2)	PaletteNumber = 0;
@@ -21,10 +21,10 @@ void position_game() {
 	}
 	
 	CFirst += GameOffset;	// add in game specific offset 
-*/	
-	OldCFirst = CFirst;	/* remember starting line for homing display */
-	TopLine = CFirst;	/* set up in case there's no vsync (like bowg_tw.bin) */
-	BottomLine = CFirst + MaxLines;
+	
+//	OldCFirst = CFirst;	/* remember starting line for homing display */
+	TopLine = 0; //CFirst;	/* set up in case there's no vsync (like bowg_tw.bin) */
+	BottomLine = MaxLines; // CFirst + MaxLines;
 }
 
 /**

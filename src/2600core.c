@@ -60,7 +60,7 @@ void ScanFrame() {
 
 	do {
 		/* Generate a raster line */
-		posinline= (240-ScanLine) + 25 + 40*240;
+		posinline= (240-ScanLine) + CFirst + 40*240;
 		nTIALineTo();
 
 		ScanLine++;
