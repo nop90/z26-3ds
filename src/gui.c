@@ -15,7 +15,7 @@
 #include "guiutil.h"
 #include "gui_sort.h"
 #include "guifilelist.h"
-//#include "guivideo.h"
+#include "guiframerate.h"
 #include "guigame.h"
 #include "guisound.h"
 #include "guitweaks.h"
@@ -97,11 +97,11 @@ gui_entry gui_items[] = {
 	{ " Select a Game ", NULL, 0, hand_load_rom, NULL },
 	{ " Resume Game", NULL, 0, resume_rom, NULL },
 	{ " ", NULL, 0, NULL, NULL },
+	{ " FPS ", NULL, 0, framerate_gui, NULL },
 	{ " Game ", NULL, 0, game_gui, NULL },
-//	{ " Video ", NULL, 0, video_gui, NULL },
 	{ " Sound ", NULL, 0, sound_gui, NULL },
 	{ " Interface ", NULL, 0, interface_gui, NULL },
-	{ " Tweaks ", NULL, 0, tweaks_gui, NULL },
+	{ " Ctrl Tweaks ", NULL, 0, tweaks_gui, NULL },
 //	{ " ", NULL, 0, NULL, NULL },
 	{ " Exit ", NULL, 0, hand_exit, NULL },
 	{ NULL, NULL, 0, NULL, NULL }		// last element must always be this

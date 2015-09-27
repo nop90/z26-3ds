@@ -9,13 +9,14 @@
 double	ctrticks = 0;
 double	Ticks = 0.0;
 double	FirstFlipTime = 0.0;
+double  PrevFrametime = 0;
 
 db isN3DS = 0;
-db skFrame = 0;
 int	Flips = 0;
 int	FPSflips = 0;
 double	CurrentFPS = 0.0;
 double	FPStime = 0.0;
+dd FPSLimit = 1;
 
 float screen_scale = 2.5;
 int screen_width = 0;	/* physical width */
@@ -98,6 +99,7 @@ db TriggerWSYNC = 0;	/* TIA tells CPU to pause on next read cycle */
 
 void def_LoadDefaults(void)
 {
+	FPSLimit = 1;
 	UserBankswitch = 0xff;
 	BSType = 0;
 
@@ -152,7 +154,7 @@ void def_LoadDefaults(void)
 	UserLGadjust = 5;
 	Lightgun = 0;
 	LGadjust = 5;
-	ShowLineCount = 0;
+	ShowLineCount = 1;
 	UserDepth = 60;
 	Depth = 60;
 	KidVid = 0;
@@ -191,7 +193,7 @@ void InitCVars(void)
 	VBlankOff=0;
 	VBlankOn=0;
 	LinesInFrame=262;
-	BailoutLine=500;	/* 320, 360, 380 */
+	BailoutLine=320; // 500;	/* 320, 360, 380 */
 //	for (i=0; i<KEYTABLESIZE; i++) KeyTable[i] = 0;
 	KeyTable = 0;
 	p0_mask = 0xff;
@@ -211,11 +213,16 @@ void InitCVars(void)
 	VSyncFlag = 0;		/* VSync flag */
 
 	ScanLine = 1;		/* Current scan line */
-	OurBailoutLine = 500; /* Initial bailout line (fine tune if exceeded) */
+	OurBailoutLine = 340; //500; /* Initial bailout line (fine tune if exceeded) */
 	
 	WByte = 0;
 
 	DisplayPointer = (dw*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+
+	FrameSkip_Counter = 0;	/* Frame skip counter */
+	FrameSkip_Value = 0;	/* Frame skip parameter */
+	PrevFrametime = 0;
+
 }
 
 

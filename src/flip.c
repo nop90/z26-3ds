@@ -37,8 +37,10 @@ void srv_Flip()
 	if (Ticks == 0.0)	Ticks = Now;
 	if (Flips++ == 0)	FirstFlipTime = Now;
 	if (FPStime == 0.0)	FPStime = Now;
+	if (PrevFrametime == 0.0)	PrevFrame = Now;
 
 	++FPSflips;
+	++FrameSkip_Counter;
 
 	if (Now - FPStime > 1000000.0)	/* update FPS every 4 seconds or ... */
 	{	
@@ -53,64 +55,10 @@ void srv_Flip()
 		FPSflips = 0;
 	}
 	
-//	ctr_SwapBuffers(); // !!!!!!!!! use sf2dlib 
+	if(Now - PrevFrametime < Ticks_per_Frame/1000) svcSleepThread(Ticks_per_Frame/1000 - Now + PrevFrametime);
+	PrevFrametime = Now;
+	if(FrameSkip_Counter>FrameSkip_Value) FrameSkip_Counter = 0;
 
-/*
-	screen_buffer_count = (screen_buffer_count + 1) & 0x03;
-	
-	if (DoInterlace)
-	{
-		switch(screen_buffer_count)
-		{
-			case 0:
-				ScreenBuffer = RealScreenBuffer1;
-				ScreenBufferPrev = RealScreenBuffer2;
-			break;
-			case 1:
-				ScreenBuffer = RealScreenBuffer3;
-				ScreenBufferPrev = RealScreenBuffer4;
-			break;
-			case 2:
-				ScreenBuffer = RealScreenBuffer2;
-				ScreenBufferPrev = RealScreenBuffer1;
-			break;
-			case 3:
-				ScreenBuffer = RealScreenBuffer4;
-				ScreenBufferPrev = RealScreenBuffer3;
-			break;
-		}
-	}
-	else
-	{
-		switch(screen_buffer_count)
-		{
-			case 0:
-				ScreenBuffer = RealScreenBuffer1;
-				ScreenBufferPrev = RealScreenBuffer4;
-				PrevScreenBuffer = RealScreenBuffer3;
-				PrevScreenBufferPrev = RealScreenBuffer2;
-			break;
-			case 1:
-				ScreenBuffer = RealScreenBuffer2;
-				ScreenBufferPrev = RealScreenBuffer1;
-				PrevScreenBuffer = RealScreenBuffer4;
-				PrevScreenBufferPrev = RealScreenBuffer3;
-			break;
-			case 2:
-				ScreenBuffer = RealScreenBuffer3;
-				ScreenBufferPrev = RealScreenBuffer2;
-				PrevScreenBuffer = RealScreenBuffer1;
-				PrevScreenBufferPrev = RealScreenBuffer4;
-			break;
-			case 3:
-				ScreenBuffer = RealScreenBuffer4;
-				ScreenBufferPrev = RealScreenBuffer3;
-				PrevScreenBuffer = RealScreenBuffer2;
-				PrevScreenBufferPrev = RealScreenBuffer1;
-			break;
-		}
-	}
-*/
 }
 
 /**

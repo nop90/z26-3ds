@@ -103,6 +103,7 @@ void Reset_emulator(void){
 	Reset();
 	Init_Service();
 	Controls();
+	Ticks_per_Frame = (PaletteNumber == 0) ? TICKS_PER_FRAME_NTSC : TICKS_PER_FRAME_PAL;
 }
 
 

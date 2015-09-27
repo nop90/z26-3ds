@@ -281,6 +281,7 @@ void cli_InterpretParm(char *p)
 
 	switch (ch)
 	{
+	case 'L':  	FPSLimit= 0;			break;  // Disable limit FPS to 50 (NTSC) or 60 (PAL/SECAM)
 	case 'd':  	dsp = parm;				break;	// sound processing
 	case 'e':	Narrow = parm;			break;	// width adjustment
 	case 'h':	Tall = parm;			break;	// height adjustment
@@ -508,6 +509,7 @@ void cli_SaveParms()
 	if (UserLeftController != 0xff)	fprintf(fp, "-)%s ", cli_controllers[UserLeftController]);
 	if (UserRightController != 0xff) fprintf(fp, "-(%s ", cli_controllers[UserRightController]);
 	if (UserAllowAll4 != 0xff)		fprintf(fp, "-4 ");
+	if (FPSLimit == 0)				fprintf(fp, "-L ");
 	if (UserSwapPortsFlag == 1)		fprintf(fp, "-w ");
 	if (ShowLineCount)				fprintf(fp, "-n ");
 	if (quiet)						fprintf(fp, "-q ");

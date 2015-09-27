@@ -16,16 +16,27 @@ typedef unsigned char			db;		/* define byte */
 
 #define TICKS_PER_MSEC (268.123480)
 
+#define TICKS_PER_SEC (268123480.0)
+#define TICKS_PER_FRAME_PAL (TICKS_PER_SEC/60)
+#define TICKS_PER_FRAME_NTSC (TICKS_PER_SEC/50)
+double  Ticks_per_Frame;
+
+
 double	ctrticks;
 double	Ticks;
 double	FirstFlipTime;
+dd FPSLimit;
 
 db isN3DS;
+
+dd FrameSkip_Counter;	/* Frame skip counter */
+dd FrameSkip_Value;		/* Frame skip parameter */
 
 int	Flips;
 int	FPSflips;
 double	CurrentFPS;
 double	FPStime;
+double  PrevFrametime;
 
 float screen_scale;
 int screen_width;

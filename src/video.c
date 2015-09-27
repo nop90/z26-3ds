@@ -42,8 +42,11 @@ void CreateScreen()	// need to be able to force video mode change
 
 void DrawScreen() {
 
-        gfxFlushBuffers();
-        gfxSwapBuffers();
+    if(GamePaused || (!FrameSkip_Counter)) { //draws game frame only when FrameSkip_Counter == 0 
+
+		gfxFlushBuffers();
+		gfxSwapBuffers();
+	}
 }
 
 /*

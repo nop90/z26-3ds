@@ -72,11 +72,6 @@ void hand_grab_input() {
 	set_yesno_string(grab_input_data, GrabInput);
 }
 
-void hand_show_fps() {
-	ShowLineCount = !ShowLineCount;
-	set_yesno_string(show_fps_data, ShowLineCount);
-}
-
 void hand_theme_inc() {
 	if (theme == 0x70) theme = 0;
 	else theme += 0x10;
@@ -89,25 +84,11 @@ void hand_theme_dec() {
 	set_theme_string();
 }
 
-void FrameSkip_inc() {
-	if (FrameSkip_Value < 8) FrameSkip_Value++;
-	else FrameSkip_Value = 9;
-	sprintf(frameskip_data, "%d", FrameSkip_Value);
-}
-
-void FrameSkip_dec() {
-	if (FrameSkip_Value > 0) FrameSkip_Value--;
-	else FrameSkip_Value = 0;
-	sprintf(frameskip_data, "%d", FrameSkip_Value);
-}
-
 void hand_interface_exit() {
 	exit_interface = 1;
 }
 
 gui_entry interface_gui_items[] = {
-	{ " Frameskip..........: %s ", frameskip_data, 0, FrameSkip_inc, FrameSkip_dec },
-	{ " Show FPS...........: %s ", show_fps_data, 0, hand_show_fps, hand_show_fps },
 	{ " Theme..............: %s ", theme_data, 0, hand_theme_inc, hand_theme_dec },
 	{ " ", NULL, 0, NULL, NULL },
 	{ " Mouse Rude.........: %s ", mouse_rude_data, 0, hand_mouse_rude, hand_mouse_rude },

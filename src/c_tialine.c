@@ -895,7 +895,7 @@ void CatchUpPixels(void){
 
 	dw PixColor;
 
-	if(TIA_Do_Output){
+	if(TIA_Do_Output && !FrameSkip_Counter){
 		if(TIA_VBLANK){
 			for(CountLoop = TIA_Last_Pixel; CountLoop < ((RClock * 3) + TIA_Delayed_Write); CountLoop++){
 		 		LoopCount = CountLoop;
@@ -1044,7 +1044,7 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0x000000ff;
+//				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 
 						/* The PF reflect bit gets only checked at center screen. */
@@ -1160,7 +1160,7 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0x000000ff;
+//				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 						
 					}	
@@ -1284,7 +1284,7 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-//				DisplayPointer[posinline] = 0x000000ff;
+//				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
@@ -1513,11 +1513,11 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0x000000ff;
+//				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 					
 				}	
-			}
+			} // end of the foor loop
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;
 		}else{
 			for(CountLoop = TIA_Last_Pixel; CountLoop < ((RClock * 3) + TIA_Delayed_Write); CountLoop++){
@@ -1692,14 +1692,15 @@ void CatchUpPixels(void){
 							PixColor = ((TIA_Colour_Table[P0_COLOUR] & 0x00ff) | (TIA_Colour_Table[PF_COLOUR] & 0xff00));
 						else 
 							PixColor = 
-							TIA_Colour_Table[TIA_Score_Priority_Table[(LoopCount - 68) / 80][TIA_Pixel_State]];
+								TIA_Colour_Table[TIA_Score_Priority_Table[(LoopCount - 68) / 80][TIA_Pixel_State]];
 					} else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 
-					DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
-					posinline+=240;
-					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
-					posinline+=240;
+					DisplayPointer[posinline+240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+//					posinline+=240;
+//					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
+//					posinline+=240;
+					posinline+=480;
 		
 						/* The PF reflect bit gets only checked at center screen. */
 						if(CTRLPF_PF_Reflect) TIA_REFPF_Flag = 40;
@@ -1833,10 +1834,11 @@ void CatchUpPixels(void){
 					else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 					
-					DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
-					posinline+=240;
-					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
-					posinline+=240;
+					DisplayPointer[posinline+240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+//					posinline+=240;
+//					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
+//					posinline+=240;
+					posinline+=480;
 					}	
 				}else if(LoopCount < 68){
 		
@@ -1968,7 +1970,7 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-//			DisplayPointer[posinline] = 0x000000ff;
+//			DisplayPointer[posinline] = 0x1;
 			posinline+=480;
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
@@ -2226,10 +2228,11 @@ void CatchUpPixels(void){
 					else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 					
-					DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
-					posinline+=240;
-					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
-					posinline+=240;
+					DisplayPointer[posinline + 240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+//					posinline+=240;
+//					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
+//					posinline+=240;
+					posinline+=480;
 				}	
 			}
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;
