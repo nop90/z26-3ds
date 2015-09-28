@@ -17,8 +17,8 @@ typedef unsigned char			db;		/* define byte */
 #define TICKS_PER_MSEC (268.123480)
 
 #define TICKS_PER_SEC (268123480.0)
-#define TICKS_PER_FRAME_PAL (TICKS_PER_SEC/60)
-#define TICKS_PER_FRAME_NTSC (TICKS_PER_SEC/50)
+#define TICKS_PER_FRAME_PAL (TICKS_PER_SEC/50.0)
+#define TICKS_PER_FRAME_NTSC (TICKS_PER_SEC/60.0)
 double  Ticks_per_Frame;
 
 

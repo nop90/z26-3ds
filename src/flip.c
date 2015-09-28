@@ -24,39 +24,39 @@ void srv_reset_timing()
 {
 	Flips = 0;
 	Ticks = 0.0;			/* reset timing calculation */
-	FirstFlipTime = 0.0;
+//	FirstFlipTime = 0.0;
 	CurrentFPS = 0.0;
 	FPStime = 0.0;
-	FPSflips = 0;
+	FPSflips = 1;
 }
 
 void srv_Flip()
 {
-	double Now = srv_get_microseconds();
+	double Now = svcGetSystemTick(); //srv_get_microseconds();
 	
 	if (Ticks == 0.0)	Ticks = Now;
-	if (Flips++ == 0)	FirstFlipTime = Now;
+//	if (Flips++ == 0)	FirstFlipTime = Now;
 	if (FPStime == 0.0)	FPStime = Now;
 	if (PrevFrametime == 0.0)	PrevFrame = Now;
 
+	Flips++;
 	++FPSflips;
 	++FrameSkip_Counter;
 
-	if (Now - FPStime > 1000000.0)	/* update FPS every 4 seconds or ... */
+	if (Now - FPStime > TICKS_PER_SEC)	// update FPS every 1 second
 	{	
-		CurrentFPS = (FPSflips * 1000000.0)/(Now - FPStime);
+		CurrentFPS = FPSflips - 1; // (FPSflips * TICKS_PER_SEC)/(Now - FPStime);
 		FPStime = Now;
-		FPSflips = 0;
-	}
-	else if (Now - FPStime <= 0.0)	/* ... if there was a time quake */
-	{
-		CurrentFPS = 0.0;
-		FPStime = Now;
-		FPSflips = 0;
+		FPSflips = 1;
 	}
 	
-	if(FPSLimit && (Now - PrevFrametime < Ticks_per_Frame/1000)) svcSleepThread(Ticks_per_Frame/1000 - Now + PrevFrametime);
-	PrevFrametime = Now;
+	if(FPSLimit && (Now - PrevFrametime < Ticks_per_Frame)) 
+	{
+		svcSleepThread(Ticks_per_Frame - (Now - PrevFrametime));
+		PrevFrametime += Ticks_per_Frame;
+	} else
+		PrevFrametime = Now;
+
 	if(FrameSkip_Counter>FrameSkip_Value) FrameSkip_Counter = 0;
 
 }

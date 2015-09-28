@@ -16,7 +16,7 @@ int	Flips = 0;
 int	FPSflips = 0;
 double	CurrentFPS = 0.0;
 double	FPStime = 0.0;
-dd FPSLimit = 1;
+dd FPSLimit = 0xffffffff;  // !0
 
 float screen_scale = 2.5;
 int screen_width = 0;	/* physical width */
