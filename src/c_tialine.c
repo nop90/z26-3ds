@@ -26,12 +26,13 @@
 #include "srv.h"
 
 /* just to be able to compile with trace */
+/*
 dd P0_Position = 0;
 dd P1_Position = 0;
 dd M0_Position = 0;
 dd M1_Position = 0;
 dd BL_Position = 0;
-
+*/
 
 dd TIACollide = 0;	// state of the 15 collision bits
 
@@ -107,7 +108,7 @@ db TIA_Delayed_Write = 0;
 #define P1_COLOUR 2
 #define P0_COLOUR 3
 
-dw TIA_Colour_Table[4] = {0, 0, 0, 0};
+db TIA_Colour_Table[4] = {0, 0, 0, 0};
 
 db TIA_Priority_Table[2][64];
 db TIA_Score_Priority_Table[2][64];
@@ -295,13 +296,13 @@ void Init_TIA(void){
 	TIACollide = 0;	// reset collision latches
 
  	for(i = 0; i < 0x2001; i++){
-		TIA_P0_Table[i] = malloc(160);
+		if(!TIA_P0_Table[i]) TIA_P0_Table[i] = malloc(160);
 		if(TIA_P0_Table[i] == NULL){
 			sprintf(msg, "Not enough memory available to run z26.\n");
 			srv_print(msg);
 			exit(1);
 		}
-		TIA_P1_Table[i] = malloc(160);
+		if(!TIA_P1_Table[i]) TIA_P1_Table[i] = malloc(160);
 		if(TIA_P1_Table[i] == NULL){
 			sprintf(msg, "Not enough memory available to run z26.\n");
 			srv_print(msg);
@@ -724,13 +725,13 @@ void Init_TIA(void){
 	}
 
 	for(i = 0; i < 0x81; i++){
-		TIA_M0_Table[i] = malloc(160);
+		if(!TIA_M0_Table[i]) TIA_M0_Table[i] = malloc(160);
 		if(TIA_M0_Table[i] == NULL){
 			sprintf(msg, "Not enough memory available to run z26.\n");
 			srv_print(msg);
 			exit(1);
 		}
-		TIA_M1_Table[i] = malloc(160);
+		if(!TIA_M1_Table[i]) TIA_M1_Table[i] = malloc(160);
 		if(TIA_M1_Table[i] == NULL){
 			sprintf(msg, "Not enough memory available to run z26.\n");
 			srv_print(msg);
@@ -763,7 +764,7 @@ void Init_TIA(void){
 		l = 1;
 	}
 	for(i = 0; i < 9; i++){
-		TIA_BL_Table[i] = malloc(160);
+		if(!TIA_BL_Table[i]) TIA_BL_Table[i] = malloc(160);
 		if(TIA_BL_Table[i] == NULL){
 			sprintf(msg, "Not enough memory available to run z26.\n");
 			srv_print(msg);
@@ -928,6 +929,8 @@ void CatchUpPixels(void){
 
 				if(LoopCount > 75){
 					
+if(!DrawHack_Blankpix){ // experimental hack
+
 					if(LoopCount == 147){
 						
 					/*
@@ -1044,7 +1047,7 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0x1;
+				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 
 						/* The PF reflect bit gets only checked at center screen. */
@@ -1160,12 +1163,14 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0x1;
+				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 						
 					}	
+} else posinline+=480;// experimental hack	
 				}else if(LoopCount < 68){
 		
+if(!DrawHack_Blankpix){ // experimental hack
 					
 					if(TIA_HMOVE_DoMove){
 						if(TIA_HMOVE_DoMove & 0x20){					
@@ -1280,12 +1285,14 @@ void CatchUpPixels(void){
 						}
 						TIA_HMOVE_DoMove = 0;
 					}	
-						
+} // experimental hack	
 				}else if(TIA_Display_HBlank){
 		
 					
-//				DisplayPointer[posinline] = 0x1;
+				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
+
+if(!DrawHack_Blankpix){ // experimental hack
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
 		
@@ -1404,9 +1411,11 @@ void CatchUpPixels(void){
 						TIA_HMOVE_DoMove = 0;
 					}	
 		
+} // experimental hack	
+
 				}else{
 		
-					
+if(!DrawHack_Blankpix){ // experimental hack
 				
 					if((LoopCount & 0x03) == 0){
 						if(TIA_Playfield_Pixels[(((LoopCount - 68) >> 2) + TIA_REFPF_Flag)] & TIA_Playfield_Bits)
@@ -1513,10 +1522,13 @@ void CatchUpPixels(void){
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
 						TIA_BL_counter_reset = 0;
 					}
-//				DisplayPointer[posinline] = 0x1;
+				DisplayPointer[posinline] = 0x1;
 				posinline+=480;
 					
 				}	
+
+} // experimental hack	
+
 			} // end of the foor loop
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;
 		}else{
@@ -1689,14 +1701,17 @@ void CatchUpPixels(void){
 							We simulate it be setting the colour of that half pixel to PF colour.
 						*/
 						if(TIA_Pixel_State == 0x01)	/* only playfield active? */
-							PixColor = ((TIA_Colour_Table[P0_COLOUR] & 0x00ff) | (TIA_Colour_Table[PF_COLOUR] & 0xff00));
+							PixColor = TIA_Colour_Table[P0_COLOUR]; //((TIA_Colour_Table[P0_COLOUR] & 0x00ff) | (TIA_Colour_Table[PF_COLOUR] & 0xff00));
 						else 
 							PixColor = 
 								TIA_Colour_Table[TIA_Score_Priority_Table[(LoopCount - 68) / 80][TIA_Pixel_State]];
 					} else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 
-					DisplayPointer[posinline+240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor]; //& 0b1111111];
+
+//					DisplayPointer[posinline+240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+
 //					posinline+=240;
 //					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
 //					posinline+=240;
@@ -1834,7 +1849,9 @@ void CatchUpPixels(void){
 					else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 					
-					DisplayPointer[posinline+240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor]; //& 0b1111111];
+
+//					DisplayPointer[posinline+240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
 //					posinline+=240;
 //					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
 //					posinline+=240;
@@ -1970,7 +1987,7 @@ void CatchUpPixels(void){
 				}else if(TIA_Display_HBlank){
 		
 					
-//			DisplayPointer[posinline] = 0x1;
+			DisplayPointer[posinline] = 0x1;
 			posinline+=480;
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
@@ -2228,7 +2245,9 @@ void CatchUpPixels(void){
 					else PixColor = 
 						TIA_Colour_Table[TIA_Priority_Table[CTRLPF_Priority][TIA_Pixel_State]];
 					
-					DisplayPointer[posinline + 240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
+					DisplayPointer[posinline] = srv_colortab_hi[PixColor]; //& 0b1111111];
+
+//					DisplayPointer[posinline + 240] = DisplayPointer[posinline] = srv_colortab_hi[PixColor& 0b1111111];
 //					posinline+=240;
 //					DisplayPointer[posinline] = srv_colortab_hi[PixColor>>8];
 //					posinline+=240;
@@ -2883,6 +2902,8 @@ void CatchUpPixels(void){
 					}
 				}
 
+if(!DrawHack_Blankpix){ // experimental hack
+
 				if(LoopCount > 75){
 					
 					if(LoopCount == 147){
@@ -3518,7 +3539,9 @@ void CatchUpPixels(void){
 					
 					TIACollide |= TIA_Collision_Table[TIA_Pixel_State];
 					
-				}	
+				}
+} // experimenta hack
+	
 			}
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;
 		}
@@ -3540,18 +3563,4 @@ void nTIALineTo(void){
 	if(TIA_Last_Pixel < (RClock * 3)) CatchUpPixels();
 	TIA_Last_Pixel = TIA_Last_Pixel % (CYCLESPERSCANLINE * 3);
 
-/*
-	int i;
-	if(TIA_Do_Output){
-		MyDisplayPointer = (dd*) DisplayPointer;
-		TIA_Pixel_PTR = (dw*) &TIA_Pixels[0];
-		for(i = 0; i < 80; i++){
-			*MyDisplayPointer = TIA_Colours[TIA_Priority[*TIA_Pixel_PTR]];
-			*TIA_Pixel_PTR &= 0x4040;
-			TIA_Pixel_PTR++;
-			MyDisplayPointer++;
-		}
-		DisplayPointer = (dw*) MyDisplayPointer;
-	}
-*/
 }

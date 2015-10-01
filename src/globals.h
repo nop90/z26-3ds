@@ -31,6 +31,8 @@ db isN3DS;
 
 dd FrameSkip_Counter;	/* Frame skip counter */
 dd FrameSkip_Value;		/* Frame skip parameter */
+dd DrawHack_Skipcols;
+dd DrawHack_Blankpix;
 
 int	Flips;
 int	FPSflips;
@@ -38,7 +40,6 @@ double	CurrentFPS;
 double	FPStime;
 double  PrevFrametime;
 
-float screen_scale;
 int screen_width;
 int screen_height;
 int screen_bpp;

@@ -5,18 +5,21 @@
 #include "globals.h"
 #include "position.h"
 #include "carts.h"
+#include "ct.h"
 
 dd TopLine = 0;    /* top line of display */
 dd BottomLine = 0; /* bottom line of display */
 
 void position_game() {
+
 	CFirst = DefaultCFirst;
 
 	if(DefaultCFirst == 0xffff) 	// if no default first line to render
 	{
 		if(PaletteNumber > 2)	PaletteNumber = 0;
 			
-		if (PaletteNumber == 0) CFirst = 18;	// NTSC
+//		if (PaletteNumber == 0) CFirst = 18;	// NTSC
+		if (Lookup(NTSC_colours)) CFirst = 18;	// NTSC
 		else 			CFirst = 38;	// 39 PAL or SECAM
 	}
 	

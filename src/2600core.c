@@ -24,6 +24,7 @@
 #include "c_cpujam.h"
 #include "c_cpu.h"
 #include "c_init.h"
+#include "ct.h"
 
 /*
  routine to blank the remains of the screen buffer, if not all of the
@@ -60,7 +61,7 @@ void ScanFrame() {
 
 	do {
 		/* Generate a raster line */
-		posinline= (240-ScanLine) + CFirst + 40*240;
+		posinline= (240-ScanLine) + CFirst/2 + 40*240;
 		nTIALineTo();
 
 		ScanLine++;
@@ -103,7 +104,7 @@ void Reset_emulator(void){
 	Reset();
 	Init_Service();
 	Controls();
-	Ticks_per_Frame = (PaletteNumber == 0) ? TICKS_PER_FRAME_NTSC : TICKS_PER_FRAME_PAL;
+	Ticks_per_Frame = (Lookup(NTSC_colours)) ? TICKS_PER_FRAME_NTSC : TICKS_PER_FRAME_PAL;
 }
 
 
@@ -121,16 +122,13 @@ void c_emulator(void) {
 		if(ResetEmulator) Reset_emulator();
 
 		srv_Events();
-//		if(srv_done) break;	/* SDL got a 'close window' message */
-
 		ScanFrame();
 
 		Controls();
 		srv_CopyScreen(); 
-//		while(GamePaused) Controls();
 	}
 	
-	srv_Cleanup();	/* shutdown SDL */
+	srv_Cleanup();	
 }
 
 

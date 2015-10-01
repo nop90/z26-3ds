@@ -87,7 +87,7 @@ db TIA_Delayed_Write;
 #define P1_COLOUR 2
 #define P0_COLOUR 3
 
-dw TIA_Colour_Table[4];
+db TIA_Colour_Table[4];
 
 db TIA_Priority_Table[2][64];
 db TIA_Score_Priority_Table[2][64];

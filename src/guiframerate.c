@@ -13,6 +13,8 @@ int exit_framerate = 0;		/* exit menu */
 char show_fps_data[52];
 char enable_fpslimit_data[52];
 char frameskip_data[52];
+char DrawHack_cols_data[52];
+char DrawHack_Blankpix_data[52];
 
 
 /* Handlers. You may be more familiar with the term `callback': that's what these are. */
@@ -26,6 +28,7 @@ void hand_enable_fpslimit() {
 	FPSLimit = !FPSLimit;
 	set_yesno_string(enable_fpslimit_data, FPSLimit);
 }
+
 void FrameSkip_inc() {
 	if (FrameSkip_Value < 8) FrameSkip_Value++;
 	else FrameSkip_Value = 9;
@@ -38,14 +41,27 @@ void FrameSkip_dec() {
 	sprintf(frameskip_data, "%d", FrameSkip_Value);
 }
 
+void hand_DrawHack_cols() {
+	DrawHack_Skipcols = !DrawHack_Skipcols;
+	set_yesno_string(DrawHack_cols_data, DrawHack_Skipcols);
+}
+
+void hand_DrawHack_Blankpix() {
+	DrawHack_Blankpix = !DrawHack_Blankpix;
+	set_yesno_string(DrawHack_Blankpix_data, DrawHack_Blankpix);
+}
+
 void hand_framerate_exit() {
 	exit_framerate = 1;
 }
 
 gui_entry framerate_gui_items[] = {
-	{ " Frameskip..........: %s ", frameskip_data, 0, FrameSkip_inc, FrameSkip_dec },
 	{ " FPS limiter........: %s ", enable_fpslimit_data, 0, hand_enable_fpslimit, hand_enable_fpslimit },
 	{ " Show FPS...........: %s ", show_fps_data, 0, hand_show_fps, hand_show_fps },
+	{ " ", NULL, 0, NULL, NULL },
+	{ " Frameskip..........: %s ", frameskip_data, 0, FrameSkip_inc, FrameSkip_dec },
+	{ " Skip even columns..: %s ", DrawHack_cols_data, 0, hand_DrawHack_cols,  hand_DrawHack_cols },
+	{ " Skip blank pixels..: %s ", DrawHack_Blankpix_data, 0, hand_DrawHack_Blankpix, hand_DrawHack_Blankpix },
 	{ " ", NULL, 0, NULL, NULL },
 	{ " Exit ", NULL, 0, hand_framerate_exit, NULL },
 	{ NULL, NULL, 0, NULL, NULL } // last element must always be this
@@ -61,6 +77,8 @@ void framerate_gui() {
 	
 	set_yesno_string(show_fps_data, ShowLineCount);
 	set_yesno_string(enable_fpslimit_data, FPSLimit);
+	set_yesno_string(DrawHack_cols_data, DrawHack_Skipcols);
+	set_yesno_string(DrawHack_Blankpix_data, DrawHack_Blankpix);
 	sprintf(frameskip_data, "%d", FrameSkip_Value);
 
 	

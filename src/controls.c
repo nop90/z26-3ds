@@ -1708,12 +1708,12 @@ void Controls()
 	if (KeyTable&ResetKey) 
 	{
 		IOPortB = IOPortB & 0xfe;	/* bit 0 = RESET */
-		set_status("RESET");
+		set_status("     RESET     ");
 	}
 	if (KeyTable&SelectKey) 
 	{
 		IOPortB = IOPortB & 0xfd;	/* bit 1 = SELECT */
-		set_status("SELECT");
+		set_status("     SELECT    ");
 	}
 
 // for OLPC XO-1
@@ -1733,22 +1733,22 @@ void Controls()
 	if (KeyTable&P0Easy) 
 	{
 		IOPortB = IOPortB & 0xbf;	/* bit 6 = P0 difficulty */
-		set_status("Player 0 Easy");
+		set_status(" Player 0 Easy ");
 	}
 	if (KeyTable&P0Hard) 
 	{
 		IOPortB = IOPortB | 0x40;
-		set_status("Player 0 Hard");
+		set_status(" Player 0 Hard ");
 	}
 	if (KeyTable&P1Easy) 
 	{
 		IOPortB = IOPortB & 0x7f;	/* bit 7 = P1 difficulty */
-		set_status("Player 1 Easy");
+		set_status(" Player 1 Easy ");
 	}
 	if (KeyTable&P1Hard) 
 	{
 		IOPortB = IOPortB | 0x80;
-		set_status("Player 1 Hard");
+		set_status(" Player 1 Hard ");
 	}
 	if (KeyTable&BWKey) 
 	{
@@ -1758,7 +1758,7 @@ void Controls()
 	if (KeyTable&ColorKey) 
 	{
 		IOPortB = IOPortB | 0x08;
-		set_status("Color");
+		set_status("     Color     ");
 	}
 
 	switch (LeftController)

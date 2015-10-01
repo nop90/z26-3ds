@@ -92,8 +92,10 @@ gui_action gui_navigation(dd keys) {
 	} else return GUI_NO_ACTION;
 */
 	if (keys & KEY_A) {
+		while(hidKeysHeld()) hidScanInput();
 		return GUI_ACTIVATE_PRI;
 	} else if (keys & KEY_Y) {
+		while(hidKeysHeld()) hidScanInput();
 		return GUI_ACTIVATE_SEC;
 	} else if (keys & KEY_UP) {
 		return GUI_UP;
@@ -106,8 +108,10 @@ gui_action gui_navigation(dd keys) {
 	} else if (keys & KEY_RIGHT) {
 		return GUI_PAGEDOWN;
 	} else if (keys & KEY_X) {
+		while(hidKeysHeld()) hidScanInput();
 		return GUI_EXIT_GUI;
 	} else if (keys & KEY_START) {
+		while(hidKeysHeld()) hidScanInput();
 		return GUI_END;
 	} else if (keys & KEY_SELECT) {
 		SaveScreenshot();

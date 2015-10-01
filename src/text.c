@@ -94,6 +94,11 @@ void draw_char(char ch, char* font, dw* surface, int fontheight, int row, int co
 	}
 }
 
+/*
+** Top screen is 13 + 53 characters wide and 28 characters high
+*/
+
+
 void draw_msg_top(int x, int y, int fg, int bg) {
 	char *mp;	/* message pointer */
 	char ch;
@@ -226,7 +231,7 @@ void show_transient_status() {
 	sprintf(msg, "%s", stat_msg);
 //	if (width == 256) draw_msg_at_color((26 - strlen(stat_msg))/2, (int) MaxLines/9 - 1, 84, 0);	// was 1,0
 //	else 
-		draw_msg_top((52 - strlen(stat_msg))/2, (int) MaxLines/9 - 1, 84, 0);	// was 1,0
+		draw_msg_top((13 + 52 - strlen(stat_msg))/2, (int) MaxLines/9 - 1, 84, 0);	// was 1,0
 }
 
 void clear_status() {

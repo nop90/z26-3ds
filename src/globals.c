@@ -17,8 +17,9 @@ int	FPSflips = 0;
 double	CurrentFPS = 0.0;
 double	FPStime = 0.0;
 dd FPSLimit = 0xffffffff;  // !0
+dd DrawHack_Skipcols = 0; // o3ds hack to gain some FPS - Draws only odd columns 
+dd DrawHack_Blankpix = 0; // o3ds hack to gain some FPS - Do not draw blank rows
 
-float screen_scale = 2.5;
 int screen_width = 0;	/* physical width */
 int screen_height = 0;	/* physical height */
 int screen_bpp = 32;		/* bits per pixel */

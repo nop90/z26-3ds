@@ -264,28 +264,28 @@ void H_NUSIZ1(void){
 
 void H_COLUP0(void){
 	CatchUpPixels();
-	TIA_Colour_Table[P0_COLOUR] = (DataBus >> 1) * 257;
+	TIA_Colour_Table[P0_COLOUR] = (DataBus >> 1);// * 257;
 
 }
 
 
 void H_COLUP1(void){
 	CatchUpPixels();
-	TIA_Colour_Table[P1_COLOUR] = (DataBus >> 1) * 257;
+	TIA_Colour_Table[P1_COLOUR] = (DataBus >> 1);// * 257;
 
 }
 
 
 void H_COLUPF(void){
 	CatchUpPixels();
-	TIA_Colour_Table[PF_COLOUR] = (DataBus >> 1) * 257;
+	TIA_Colour_Table[PF_COLOUR] = (DataBus >> 1);// * 257;
 
 }
 
 
 void H_COLUBK(void){
 	CatchUpPixels();
-	TIA_Colour_Table[BG_COLOUR] = (DataBus >> 1) * 257;
+	TIA_Colour_Table[BG_COLOUR] = (DataBus >> 1);// * 257;
 
 }
 

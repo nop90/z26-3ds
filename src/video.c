@@ -39,11 +39,15 @@ void CreateScreen()	// need to be able to force video mode change
 }
 
 
-
 void DrawScreen() {
 
+	dd x;
+	db	*topscreen = (db*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	
     if(GamePaused || (!FrameSkip_Counter)) { //draws game frame only when FrameSkip_Counter == 0 
-
+		if (!DrawHack_Skipcols && !GamePaused)
+			for(x=480*40; x<480*360; x+=960)
+				memcpy(topscreen+x+480, topscreen+x, 480);
 		gfxFlushBuffers();
 		gfxSwapBuffers();
 	}

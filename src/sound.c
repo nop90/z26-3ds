@@ -29,7 +29,7 @@ int SQ_Test()
 	
 	if(count >= SQ_Max-4) return -1; 	/* full (with a little slop for resampling) */
 	if(count <= SQ_Max/2) return 0; 	/* less than 1/2 full */
-	return 1; 				/* just right */
+	return 1; 							/* just right */
 }
 
 /*
