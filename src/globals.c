@@ -17,8 +17,6 @@ int	FPSflips = 0;
 double	CurrentFPS = 0.0;
 double	FPStime = 0.0;
 dd FPSLimit = 0xffffffff;  // !0
-dd DrawHack_Skipcols = 0; // o3ds hack to gain some FPS - Draws only odd columns 
-dd DrawHack_Blankpix = 0; // o3ds hack to gain some FPS - Do not draw blank rows
 
 int screen_width = 0;	/* physical width */
 int screen_height = 0;	/* physical height */
@@ -101,6 +99,7 @@ db TriggerWSYNC = 0;	/* TIA tells CPU to pause on next read cycle */
 void def_LoadDefaults(void)
 {
 	FPSLimit = 1;
+	FrameSkip_Value = 0;	/* Frame skip parameter */
 	UserBankswitch = 0xff;
 	BSType = 0;
 
@@ -127,7 +126,6 @@ void def_LoadDefaults(void)
 	GameOffset = 0;
 	theme = 0x50;			// aqua
 	VideoMode = 0xff;
-	FullScreen = 0; // 1;
 	Narrow = 0;
 	Tall = 0;
 	CFirst = 0xffff;
@@ -221,7 +219,6 @@ void InitCVars(void)
 	DisplayPointer = (dw*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 
 	FrameSkip_Counter = 0;	/* Frame skip counter */
-	FrameSkip_Value = 0;	/* Frame skip parameter */
 	PrevFrametime = 0;
 
 }

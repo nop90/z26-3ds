@@ -2,11 +2,19 @@
 ** sdlsound.c -- SDL sound code
 */
 
+#include <3ds.h>
 #include <string.h>
 #include "globals.h"
 #include "sound.h"
 
+#define SOUND_FREQUENCY	44100
+#define SOUND_BUFFER_SIZE	8192
+
+
 static int sound_is_on = 0;
+u8 *stream;
+u32 bufferpos;
+
 
 void Init_SoundQ() 
 {
@@ -14,6 +22,9 @@ void Init_SoundQ()
 	SQ_Input = SoundQ;
 	SQ_Output = SoundQ;
 	SQ_Top = SoundQ + SQ_Max;
+    stream = (u8*)linearAlloc(SOUND_BUFFER_SIZE);
+	bufferpos=0;
+
 }
 
 int SQ_Count() {
@@ -56,49 +67,26 @@ void fillerup(void *unused, db *stream, int len)
 	}
 	else
 	{
-		while(len)			/* 16-bit signed samples */
+		while(len)	
 		{
-
-			*stream++ = 0;		/* LSB = 0 */
-			len--;
-			*stream++ = *SQ_Output++;
+			stream[bufferpos++] = *SQ_Output++;
 			len--;
 			if(SQ_Output >= SQ_Top) SQ_Output = SoundQ;
+			if(bufferpos >= SOUND_BUFFER_SIZE) bufferpos = 0;
 		}
 	}
 }
 
 void srv_sound_on()
 {
-/*
-	SDL_AudioSpec desired, obtained;
-
-	if (quiet==0)
-	{
-		if (sound_is_on) return;
-
-		desired.freq = 44100;		// CD-quality 
-		desired.callback = fillerup;
-		desired.format = AUDIO_S16;	// 16-bit 
-		desired.channels = 1;		// mono 
-		desired.samples = 1024;		// SQ_Max/3 
-
-		if ( SDL_OpenAudio(&desired, &obtained) < 0 ) 
-		{
-			printf("Couldn't open audio: %s\n",SDL_GetError());
-			quiet = 1;
-		}
-
-		SDL_PauseAudio(0);		// turn on the callback 
-*/
-		sound_is_on = 1;
-//	}
+	SQ_Output = SoundQ;
+	bufferpos = 0;
+	sound_is_on = 1;
 
 }
 
 void srv_sound_off()
 {
-//	if (quiet==0) SDL_CloseAudio();
 	sound_is_on = 0;
 }
 

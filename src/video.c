@@ -18,6 +18,7 @@
 
 void ClearScreenBuffers()
 {
+
 	int i;
 	u16 * fb;
 	fb= (u16*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
@@ -30,6 +31,10 @@ void ClearScreenBuffers()
 	for (i=0; i<400*240;i++) fb[i] = 0;
 	fb= (u16*) gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
 	for (i=0; i<320*240;i++) fb[i] = 0;
+/*
+	gpuClearBuffers(0x00000000);
+    gfxSwapBuffers();
+*/
 }
 
 
@@ -42,14 +47,17 @@ void CreateScreen()	// need to be able to force video mode change
 void DrawScreen() {
 
 	dd x;
-	db	*topscreen = (db*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	db	*topscreen = (db*) gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL) +15;
 	
     if(GamePaused || (!FrameSkip_Counter)) { //draws game frame only when FrameSkip_Counter == 0 
-		if (!DrawHack_Skipcols && !GamePaused)
+//		if (!DrawHack_Skipcols && !GamePaused)
+		if (!GamePaused)
 			for(x=480*40; x<480*360; x+=960)
-				memcpy(topscreen+x+480, topscreen+x, 480);
+				memcpy(topscreen+x+480, topscreen+x, 450); // 480);
 		gfxFlushBuffers();
 		gfxSwapBuffers();
+//		gpuClearBuffers(0x00000000);
+
 	}
 }
 
@@ -171,22 +179,9 @@ void srv_CopyScreen()
 	
 	odd++;		  // alternate startline for interlaced display
 	
-//	if (tiawidth == 160) pixelspread *= 2;	// for the narrow tia engine
-	
 	Vert = 0;//(height - scanlinespread*MaxLines) / 2;
 	Horiz = 0;//(width - pixelspread*tiawidth) / 2;
-//	if (width == 256) Horiz = (width - pixelspread*tiawidth/2) / 2;
-
-//	srv_buffer = srv_screen->data; //srv_screen->pixels;
 	srv_pitch = 512*4; // srv_screen->pitch;
-
-//	emu_pixels = ScreenBuffer;
-//	emu_pixels_prev = ScreenBufferPrev;
-//	prev_emu_pixels = PrevScreenBuffer;
-//	prev_emu_pixels_prev = PrevScreenBufferPrev;
-
-//	screen_pixels = srv_buffer + Horiz*bpp + (Vert)*srv_pitch;
-	
 	if (status_timer > 0) 
 		{
 			show_transient_status();
@@ -199,38 +194,9 @@ void srv_CopyScreen()
 		}
 	
 	lines2draw = scanlinespread;
-
-//	copy = FastPixCopy32;
-
-/*
-	for (i=0; i<MaxLines; ++i)
-	{	
-		(*copy)();
-		screen_pixels += scanlinespread * srv_pitch;
-		emu_pixels += tiawidth;
-//		emu_pixels_prev += tiawidth;
-//		prev_emu_pixels += tiawidth;
-//		prev_emu_pixels_prev += tiawidth;
-	}
-*/
-/*
-	for (i=0; i<MaxLines; ++i)
-	{	
-		(*copy)();
-		screen_pixels += scanlinespread * srv_pitch;
-		emu_pixels += tiawidth;
-	}
-
-	srv_screen->tiled = 0;
-*/
 	DrawScreen();   
 	
 	srv_Flip();
-//	memset(ScreenBuffer, 0, MaxLines*tiawidth);
-//	memset(srv_buffer, 0, 512*256*4);
-
-	
-//	pixelspread = oldpixelspread;
 }
 
 
@@ -253,55 +219,8 @@ void gui_CopyScreen()
 	Vert = 0;//(height - scanlinespread*MaxLines) / 2;
 	Horiz = 0;//(width - pixelspread*tiawidth) / 2;
 
-//	srv_buffer = srv_gui->data; //srv_screen->pixels;
 	srv_pitch = 512*4; // srv_screen->pitch;
-
-//	emu_pixels = ScreenBuffer;
-//	emu_pixels_prev = ScreenBufferPrev;
-//	prev_emu_pixels = PrevScreenBuffer;
-//	prev_emu_pixels_prev = PrevScreenBufferPrev;
-
-//	screen_pixels = srv_buffer ;//+ Horiz*bpp + (Vert)*srv_pitch;
-	
-/*	if (status_timer > 0) 
-		{
-			show_transient_status();
-			status_timer--;
-		}
-		else if (ShowLineCount && !GamePaused)
-		{
-			show_scanlines();
-		}
-*/	
 	lines2draw = scanlinespread;
-
-//	copy = PixCopy32_2;
-/*
-	if (scanlinespread == 1) 
-		copy = FastPixCopy32;
-	else if (DoInterlace)
-	{
-		lines2draw = scanlinespread / 2;
-		if (odd & 1) screen_pixels += lines2draw * srv_pitch;
-	}
-	else if (scanlinespread == 2)
-		copy = PixCopy32_2;
-	else if (scanlinespread == 4)
-		copy = PixCopy32_4;
-*/
-/*
-	for (i=0; i<MaxLines; ++i)
-	{	
-		(*copy)();
-		screen_pixels += scanlinespread * srv_pitch;
-		emu_pixels += tiawidth;
-//		emu_pixels_prev += tiawidth;
-//		prev_emu_pixels += tiawidth;
-//		prev_emu_pixels_prev += tiawidth;
-	}
-
-//	srv_gui->tiled = 0;
-*/
 	DrawScreen();   
 	
 	srv_Flip();

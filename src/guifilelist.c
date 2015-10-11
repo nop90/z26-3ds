@@ -239,7 +239,7 @@ int file_selector(char *result) {
 		first_filelist = 0;
 	}
 
-	while(hidKeysHeld()) hidScanInput();
+	while(hidKeysHeld()) hidScanInput(); //wait for previous keys to be released
 
 	while(!picked) {
 		int action;

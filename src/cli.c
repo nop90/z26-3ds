@@ -283,13 +283,13 @@ void cli_InterpretParm(char *p)
 	{
 	case 'L':  	FPSLimit= 0;			break;  // Disable limit FPS to 50 (NTSC) or 60 (PAL/SECAM)
 	case 'd':  	dsp = parm;				break;	// sound processing
-	case 'e':	Narrow = parm;			break;	// width adjustment
-	case 'h':	Tall = parm;			break;	// height adjustment
+//	case 'e':	Narrow = parm;			break;	// width adjustment
+//	case 'h':	Tall = parm;			break;	// height adjustment
 	case 'F':	FrameSkip_Value = parm;	break;	// Frameskip value
 	case 'q':  	quiet = 1;				break;	// no sound
 	case 'S':	DoScanline = 1;			break;	// scanline display
 	case 'C':	theme = parm & 0x70;	break;	// color theme for the GUI
-	case 'o':	SimColourLoss = 1;		break;	// simulate colour loss
+//	case 'o':	SimColourLoss = 1;		break;	// simulate colour loss
 	case 'n':	ShowLineCount = 1;		break;	// show line count and framerate
 	case '!':	DoInterlace = 1;		break;	// do interlace
 
@@ -331,14 +331,6 @@ void cli_InterpretParm(char *p)
 	
 	case 'f':	UserDepth = parm;				// user specified scanline depth
 				Depth = UserDepth;			
-				break;
-
-	case 'v':	if (parm >= 10)					// set video mode
-					FullScreen = 0;
-				else
-					FullScreen = 1;
-
-       			VideoMode = parm % 10;
 				break;
 
 	case ')':	LeftController = GetController(p);	// set left controller
@@ -490,7 +482,6 @@ void cli_SaveParms()
 	{
 		sprintf(msg, "Couldn't find z26.gui file.");
 		srv_print(msg);
-//		SDL_Quit();
 		z26_3ds_quit();
 		exit(1);
 	}
@@ -498,12 +489,6 @@ void cli_SaveParms()
 	rewind(parmfp);
 	fp = parmfp;
 	
-	fprintf(fp, "-v");					// (-v) do video mode
-	
-	if (!FullScreen)		fputc('1', fp);
-
-	fprintf(fp, "%1d ",VideoMode);
-
 	if (UserPaletteNumber != 0xff)	fprintf(fp, "-c%1d ", UserPaletteNumber);
 	if (UserBankswitch != 0xff)		fprintf(fp, "-g%d ", UserBankswitch);
 	if (UserLeftController != 0xff)	fprintf(fp, "-)%s ", cli_controllers[UserLeftController]);
@@ -514,10 +499,10 @@ void cli_SaveParms()
 	if (ShowLineCount)				fprintf(fp, "-n ");
 	if (quiet)						fprintf(fp, "-q ");
 	if (dsp != 1)					fprintf(fp, "-d%1d ", dsp);
-	if (Narrow)						fprintf(fp, "-e%d ", Narrow);
-	if (Tall)						fprintf(fp, "-h%d ", Tall);
+//	if (Narrow)						fprintf(fp, "-e%d ", Narrow);
+//	if (Tall)						fprintf(fp, "-h%d ", Tall);
 	if (FrameSkip_Value)			fprintf(fp, "-F%d ", FrameSkip_Value);
-	if (SimColourLoss)				fprintf(fp, "-o ");
+//	if (SimColourLoss)				fprintf(fp, "-o ");
 	if (DoInterlace)				fprintf(fp, "-! ");
 	if (UserDepth != 60)			fprintf(fp, "-f%d ", UserDepth);
 	if (DoScanline)					fprintf(fp, "-S ");

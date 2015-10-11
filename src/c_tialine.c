@@ -116,12 +116,6 @@ db TIA_Score_Priority_Table[2][64];
 db ObjectStartTable[8][320];
 
 
-dd TIA_P0_counter_reset = 0;
-dd TIA_P1_counter_reset = 0;
-dd TIA_M0_counter_reset = 0;
-dd TIA_M1_counter_reset = 0;
-dd TIA_BL_counter_reset = 0;
-
 dd TIA_Playfield_Value = 0;
 dd TIA_REFPF_Flag = 0;
 db TIA_VBLANK = 0;
@@ -896,7 +890,8 @@ void CatchUpPixels(void){
 
 	dw PixColor;
 
-	if(TIA_Do_Output && !FrameSkip_Counter){
+if(!FrameSkip_Counter){
+	if(TIA_Do_Output){
 		if(TIA_VBLANK){
 			for(CountLoop = TIA_Last_Pixel; CountLoop < ((RClock * 3) + TIA_Delayed_Write); CountLoop++){
 		 		LoopCount = CountLoop;
@@ -929,8 +924,6 @@ void CatchUpPixels(void){
 
 				if(LoopCount > 75){
 					
-if(!DrawHack_Blankpix){ // experimental hack
-
 					if(LoopCount == 147){
 						
 					/*
@@ -942,243 +935,245 @@ if(!DrawHack_Blankpix){ // experimental hack
 			
 						
 				
-					if((LoopCount & 0x03) == 0){
-						if(TIA_Playfield_Pixels[(((LoopCount - 68) >> 2) + TIA_REFPF_Flag)] & TIA_Playfield_Bits)
-							Current_PF_Pixel = 0x01;
-						else Current_PF_Pixel = 0x00;
-					};
-				
-					TIA_P0_counter++;
-					if(TIA_P0_counter == 160){
-						
-						TIA_P0_counter = TIA_P0_counter_reset;
-						/*
-							0x2000 = handle hand rendered graphics
+						if((LoopCount & 0x03) == 0){
+							if(TIA_Playfield_Pixels[(((LoopCount - 68) >> 2) + TIA_REFPF_Flag)] & TIA_Playfield_Bits)
+								Current_PF_Pixel = 0x01;
+							else Current_PF_Pixel = 0x00;
+						};
+					
+						TIA_P0_counter++;
+						if(TIA_P0_counter == 160){
 							
-							0x1000 REFP0
-							0x0ff0 GRP0_new or GRP0_old value
-							0x0008 show first copy of current NUSIZ0
-							0x0007 NUSIZ0_number
-						*/
-						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
-						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
-						else Pointer_Index_P0 |= TIA_GRP0_new;
-						
-						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
-					/* TODO: handle RESPM0 here */
-					}
-				
-					TIA_P1_counter++;
-					if(TIA_P1_counter == 160){
-						
-						TIA_P1_counter = TIA_P1_counter_reset;
-						/*
-							0x2000 = handle hand rendered graphics
+							TIA_P0_counter = 0;
+							/*
+								0x2000 = handle hand rendered graphics
+								
+								0x1000 REFP0
+								0x0ff0 GRP0_new or GRP0_old value
+								0x0008 show first copy of current NUSIZ0
+								0x0007 NUSIZ0_number
+							*/
+							Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
+							Pointer_Index_P0 |= 0x0008;
+							if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
+							else Pointer_Index_P0 |= TIA_GRP0_new;
 							
-							0x1000 REFP1
-							0x0ff0 GRP1_new or GRP1_old value
-							0x0008 show first copy of current NUSIZ1
-							0x0007 NUSIZ1_number
-						*/
-						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
-						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
-						else Pointer_Index_P1 |= TIA_GRP1_new;
-						
-						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
-					/* TODO: handle RESPM1 here */
-					}
-				
-					TIA_M0_counter++;
-					if(TIA_M0_counter == 160){
-						
-						TIA_M0_counter = TIA_M0_counter_reset;
-						/*
-							0x80 = handle hand rendered graphics
+							TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
+							//TIA_P0_counter_reset = 0;
+						/* TODO: handle RESPM0 here */
+						}
+					
+						TIA_P1_counter++;
+						if(TIA_P1_counter == 160){
 							
-							0x40 TIA_ENAM0
-							0x30 NUSIZ_M0_width
-							0x08 show first copy of current NUSIZ0
-							0x07 NUSIZ0_number
-						*/
-						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
-						
-						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
-					}
-				
-					TIA_M1_counter++;
-					if(TIA_M1_counter == 160){
-						
-						TIA_M1_counter = TIA_M1_counter_reset;
-						/*
-							0x80 = handle hand rendered graphics
+							TIA_P1_counter = 0;//TIA_P1_counter_reset;
+							/*
+								0x2000 = handle hand rendered graphics
+								
+								0x1000 REFP1
+								0x0ff0 GRP1_new or GRP1_old value
+								0x0008 show first copy of current NUSIZ1
+								0x0007 NUSIZ1_number
+							*/
+							Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
+							Pointer_Index_P1 |= 0x0008;
+	//						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+							if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
+							else Pointer_Index_P1 |= TIA_GRP1_new;
 							
-							0x40 TIA_ENAM1
-							0x30 NUSIZ_M1_width
-							0x08 show first copy of current NUSIZ1
-							0x07 NUSIZ1_number
-						*/
-						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
-						
-						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
-					}
-				
-					TIA_BL_counter++;
-					if(TIA_BL_counter == 160){
-						
-						TIA_BL_counter = TIA_BL_counter_reset;
-						/*
-							0x08 = handle hand rendered graphics
+							TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
+							//TIA_P1_counter_reset = 0;
+						/* TODO: handle RESPM1 here */
+						}
+					
+						TIA_M0_counter++;
+						if(TIA_M0_counter == 160){
 							
-							0x04 TIA_ENABL_new or TIA_ENABL_old
-							0x03 CTRLPF_BL_width
-						*/
-						Pointer_Index_BL = CTRLPF_BL_width;
-						if(TIA_VDELBL) Pointer_Index_BL |= TIA_ENABL_old;
-						else Pointer_Index_BL |= TIA_ENABL_new;
-						
-						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
-					}
-				DisplayPointer[posinline] = 0x1;
-				posinline+=480;
+							TIA_M0_counter = 0;//TIA_M0_counter_reset;
+							/*
+								0x80 = handle hand rendered graphics
+								
+								0x40 TIA_ENAM0
+								0x30 NUSIZ_M0_width
+								0x08 show first copy of current NUSIZ0
+								0x07 NUSIZ0_number
+							*/
+							Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
+							Pointer_Index_M0 |= 0x08;
+	//						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+							
+							TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
+							//TIA_M0_counter_reset = 0;
+						}
+					
+						TIA_M1_counter++;
+						if(TIA_M1_counter == 160){
+							
+							TIA_M1_counter = 0;//TIA_M1_counter_reset;
+							/*
+								0x80 = handle hand rendered graphics
+								
+								0x40 TIA_ENAM1
+								0x30 NUSIZ_M1_width
+								0x08 show first copy of current NUSIZ1
+								0x07 NUSIZ1_number
+							*/
+							Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
+							Pointer_Index_M1 |= 0x08;
+	//						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+							
+							TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
+							//TIA_M1_counter_reset = 0;
+						}
+					
+						TIA_BL_counter++;
+						if(TIA_BL_counter == 160){
+							
+							TIA_BL_counter = 0;//TIA_BL_counter_reset;
+							/*
+								0x08 = handle hand rendered graphics
+								
+								0x04 TIA_ENABL_new or TIA_ENABL_old
+								0x03 CTRLPF_BL_width
+							*/
+							Pointer_Index_BL = CTRLPF_BL_width;
+							if(TIA_VDELBL) Pointer_Index_BL |= TIA_ENABL_old;
+							else Pointer_Index_BL |= TIA_ENABL_new;
+							
+							TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
+							//TIA_BL_counter_reset = 0;
+						}
+						DisplayPointer[posinline] = 0x1;
+						posinline+=480;
 
 						/* The PF reflect bit gets only checked at center screen. */
 						if(CTRLPF_PF_Reflect) TIA_REFPF_Flag = 40;
 						else TIA_REFPF_Flag = 0;
-		
-					}else{
-		
-						
-				
-					if((LoopCount & 0x03) == 0){
-						if(TIA_Playfield_Pixels[(((LoopCount - 68) >> 2) + TIA_REFPF_Flag)] & TIA_Playfield_Bits)
-							Current_PF_Pixel = 0x01;
-						else Current_PF_Pixel = 0x00;
-					};
-				
-					TIA_P0_counter++;
-					if(TIA_P0_counter == 160){
-						
-						TIA_P0_counter = TIA_P0_counter_reset;
-						/*
-							0x2000 = handle hand rendered graphics
-							
-							0x1000 REFP0
-							0x0ff0 GRP0_new or GRP0_old value
-							0x0008 show first copy of current NUSIZ0
-							0x0007 NUSIZ0_number
-						*/
-						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
-						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
-						else Pointer_Index_P0 |= TIA_GRP0_new;
-						
-						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
-					/* TODO: handle RESPM0 here */
-					}
-				
-					TIA_P1_counter++;
-					if(TIA_P1_counter == 160){
-						
-						TIA_P1_counter = TIA_P1_counter_reset;
-						/*
-							0x2000 = handle hand rendered graphics
-							
-							0x1000 REFP1
-							0x0ff0 GRP1_new or GRP1_old value
-							0x0008 show first copy of current NUSIZ1
-							0x0007 NUSIZ1_number
-						*/
-						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
-						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
-						else Pointer_Index_P1 |= TIA_GRP1_new;
-						
-						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
-					/* TODO: handle RESPM1 here */
-					}
-				
-					TIA_M0_counter++;
-					if(TIA_M0_counter == 160){
-						
-						TIA_M0_counter = TIA_M0_counter_reset;
-						/*
-							0x80 = handle hand rendered graphics
-							
-							0x40 TIA_ENAM0
-							0x30 NUSIZ_M0_width
-							0x08 show first copy of current NUSIZ0
-							0x07 NUSIZ0_number
-						*/
-						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
-						
-						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
-					}
-				
-					TIA_M1_counter++;
-					if(TIA_M1_counter == 160){
-						
-						TIA_M1_counter = TIA_M1_counter_reset;
-						/*
-							0x80 = handle hand rendered graphics
-							
-							0x40 TIA_ENAM1
-							0x30 NUSIZ_M1_width
-							0x08 show first copy of current NUSIZ1
-							0x07 NUSIZ1_number
-						*/
-						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
-						
-						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
-					}
-				
-					TIA_BL_counter++;
-					if(TIA_BL_counter == 160){
-						
-						TIA_BL_counter = TIA_BL_counter_reset;
-						/*
-							0x08 = handle hand rendered graphics
-							
-							0x04 TIA_ENABL_new or TIA_ENABL_old
-							0x03 CTRLPF_BL_width
-						*/
-						Pointer_Index_BL = CTRLPF_BL_width;
-						if(TIA_VDELBL) Pointer_Index_BL |= TIA_ENABL_old;
-						else Pointer_Index_BL |= TIA_ENABL_new;
-						
-						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
-					}
-				DisplayPointer[posinline] = 0x1;
-				posinline+=480;
-						
-					}	
-} else posinline+=480;// experimental hack	
-				}else if(LoopCount < 68){
-		
-if(!DrawHack_Blankpix){ // experimental hack
+			
+					}else{  // LoopCount > 75 but !=147
+
+						if((LoopCount & 0x03) == 0){
+							if(TIA_Playfield_Pixels[(((LoopCount - 68) >> 2) + TIA_REFPF_Flag)] & TIA_Playfield_Bits)
+								Current_PF_Pixel = 0x01;
+							else Current_PF_Pixel = 0x00;
+						};
 					
+						TIA_P0_counter++;
+						if(TIA_P0_counter == 160){
+							
+							TIA_P0_counter = 0;//TIA_P0_counter_reset;
+							/*
+								0x2000 = handle hand rendered graphics
+								
+								0x1000 REFP0
+								0x0ff0 GRP0_new or GRP0_old value
+								0x0008 show first copy of current NUSIZ0
+								0x0007 NUSIZ0_number
+							*/
+							Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
+							Pointer_Index_P0 |= 0x0008;
+	//						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+							if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
+							else Pointer_Index_P0 |= TIA_GRP0_new;
+							
+							TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
+							//TIA_P0_counter_reset = 0;
+						/* TODO: handle RESPM0 here */
+						}
+					
+						TIA_P1_counter++;
+						if(TIA_P1_counter == 160){
+							
+							TIA_P1_counter = 0;//TIA_P1_counter_reset;
+							/*
+								0x2000 = handle hand rendered graphics
+								
+								0x1000 REFP1
+								0x0ff0 GRP1_new or GRP1_old value
+								0x0008 show first copy of current NUSIZ1
+								0x0007 NUSIZ1_number
+							*/
+							Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
+							Pointer_Index_P1 |= 0x0008;
+	//						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+							if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
+							else Pointer_Index_P1 |= TIA_GRP1_new;
+							
+							TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
+							//TIA_P1_counter_reset = 0;
+						/* TODO: handle RESPM1 here */
+						}
+					
+						TIA_M0_counter++;
+						if(TIA_M0_counter == 160){
+							
+							TIA_M0_counter = 0;//TIA_M0_counter_reset;
+							/*
+								0x80 = handle hand rendered graphics
+								
+								0x40 TIA_ENAM0
+								0x30 NUSIZ_M0_width
+								0x08 show first copy of current NUSIZ0
+								0x07 NUSIZ0_number
+							*/
+							Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
+							Pointer_Index_M0 |= 0x08;
+	//						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+							
+							TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
+							//TIA_M0_counter_reset = 0;
+						}
+					
+						TIA_M1_counter++;
+						if(TIA_M1_counter == 160){
+							
+							TIA_M1_counter = 0;//TIA_M1_counter_reset;
+							/*
+								0x80 = handle hand rendered graphics
+								
+								0x40 TIA_ENAM1
+								0x30 NUSIZ_M1_width
+								0x08 show first copy of current NUSIZ1
+								0x07 NUSIZ1_number
+							*/
+							Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
+							Pointer_Index_M1 |= 0x08;
+							
+							TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
+							//TIA_M1_counter_reset = 0;
+						}
+					
+						TIA_BL_counter++;
+						if(TIA_BL_counter == 160){
+							
+							TIA_BL_counter = 0;//TIA_BL_counter_reset;
+							/*
+								0x08 = handle hand rendered graphics
+								
+								0x04 TIA_ENABL_new or TIA_ENABL_old
+								0x03 CTRLPF_BL_width
+							*/
+							Pointer_Index_BL = CTRLPF_BL_width;
+							if(TIA_VDELBL) Pointer_Index_BL |= TIA_ENABL_old;
+							else Pointer_Index_BL |= TIA_ENABL_new;
+							
+							TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
+							//TIA_BL_counter_reset = 0;
+						}
+
+						DisplayPointer[posinline] = 0x1;
+						posinline+=480;
+							
+					}	
+				}else if(LoopCount < 68){  
+		
 					if(TIA_HMOVE_DoMove){
 						if(TIA_HMOVE_DoMove & 0x20){					
 							
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;//TIA_P0_counter_reset;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1188,12 +1183,12 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
+						//TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -1202,7 +1197,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;//TIA_P1_counter_reset;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1212,12 +1207,12 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
+						//TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -1226,7 +1221,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;//TIA_M0_counter_reset;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1236,10 +1231,10 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
+						//TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -1247,7 +1242,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;//TIA_M1_counter_reset;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1260,7 +1255,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
+						//TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -1268,7 +1263,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;//TIA_BL_counter_reset;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -1280,19 +1275,17 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
+						//TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
 					}	
-} // experimental hack	
-				}else if(TIA_Display_HBlank){
+				}else if(TIA_Display_HBlank){ // // LoopCount in in the range 68 75 
 		
 					
-				DisplayPointer[posinline] = 0x1;
-				posinline+=480;
+					DisplayPointer[posinline] = 0x1;
+					posinline+=480;
 
-if(!DrawHack_Blankpix){ // experimental hack
 
 					if(LoopCount == 75) TIA_Display_HBlank = 0;
 		
@@ -1300,123 +1293,123 @@ if(!DrawHack_Blankpix){ // experimental hack
 					if(TIA_HMOVE_DoMove){
 						if(TIA_HMOVE_DoMove & 0x20){					
 							
-					TIA_P0_counter++;
-					if(TIA_P0_counter == 160){
-						
-						TIA_P0_counter = TIA_P0_counter_reset;
-						/*
-							0x2000 = handle hand rendered graphics
-							
-							0x1000 REFP0
-							0x0ff0 GRP0_new or GRP0_old value
-							0x0008 show first copy of current NUSIZ0
-							0x0007 NUSIZ0_number
-						*/
-						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
-						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
-						else Pointer_Index_P0 |= TIA_GRP0_new;
-						
-						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
-					/* TODO: handle RESPM0 here */
-					}
+							TIA_P0_counter++;
+							if(TIA_P0_counter == 160){
+								
+								TIA_P0_counter = 0;//TIA_P0_counter_reset;
+								/*
+									0x2000 = handle hand rendered graphics
+									
+									0x1000 REFP0
+									0x0ff0 GRP0_new or GRP0_old value
+									0x0008 show first copy of current NUSIZ0
+									0x0007 NUSIZ0_number
+								*/
+								Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
+								Pointer_Index_P0 |= 0x0008;
+		//						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+								if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
+								else Pointer_Index_P0 |= TIA_GRP0_new;
+								
+								TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
+								//TIA_P0_counter_reset = 0;
+							/* TODO: handle RESPM0 here */
+							}
 						}
 						if(TIA_HMOVE_DoMove & 0x10){					
-							
-					TIA_P1_counter++;
-					if(TIA_P1_counter == 160){
-						
-						TIA_P1_counter = TIA_P1_counter_reset;
-						/*
-							0x2000 = handle hand rendered graphics
-							
-							0x1000 REFP1
-							0x0ff0 GRP1_new or GRP1_old value
-							0x0008 show first copy of current NUSIZ1
-							0x0007 NUSIZ1_number
-						*/
-						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
-						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
-						else Pointer_Index_P1 |= TIA_GRP1_new;
-						
-						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
-					/* TODO: handle RESPM1 here */
-					}
+								
+							TIA_P1_counter++;
+							if(TIA_P1_counter == 160){
+								
+								TIA_P1_counter = 0;//TIA_P1_counter_reset;
+								/*
+									0x2000 = handle hand rendered graphics
+									
+									0x1000 REFP1
+									0x0ff0 GRP1_new or GRP1_old value
+									0x0008 show first copy of current NUSIZ1
+									0x0007 NUSIZ1_number
+								*/
+								Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
+								Pointer_Index_P1 |= 0x0008;
+		//						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+								if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
+								else Pointer_Index_P1 |= TIA_GRP1_new;
+								
+								TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
+								//TIA_P1_counter_reset = 0;
+							/* TODO: handle RESPM1 here */
+							}
 						}
 						if(TIA_HMOVE_DoMove & 0x08){					
-							
-					TIA_M0_counter++;
-					if(TIA_M0_counter == 160){
-						
-						TIA_M0_counter = TIA_M0_counter_reset;
-						/*
-							0x80 = handle hand rendered graphics
-							
-							0x40 TIA_ENAM0
-							0x30 NUSIZ_M0_width
-							0x08 show first copy of current NUSIZ0
-							0x07 NUSIZ0_number
-						*/
-						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
-						
-						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
-					}
+								
+							TIA_M0_counter++;
+							if(TIA_M0_counter == 160){
+								
+								TIA_M0_counter = 0;//TIA_M0_counter_reset;
+								/*
+									0x80 = handle hand rendered graphics
+									
+									0x40 TIA_ENAM0
+									0x30 NUSIZ_M0_width
+									0x08 show first copy of current NUSIZ0
+									0x07 NUSIZ0_number
+								*/
+								Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
+								Pointer_Index_M0 |= 0x08;
+		//						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+								
+								TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
+								//TIA_M0_counter_reset = 0;
+							}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
-							
-					TIA_M1_counter++;
-					if(TIA_M1_counter == 160){
-						
-						TIA_M1_counter = TIA_M1_counter_reset;
-						/*
-							0x80 = handle hand rendered graphics
-							
-							0x40 TIA_ENAM1
-							0x30 NUSIZ_M1_width
-							0x08 show first copy of current NUSIZ1
-							0x07 NUSIZ1_number
-						*/
-						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
-						
-						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
-					}
+								
+							TIA_M1_counter++;
+							if(TIA_M1_counter == 160){
+								
+								TIA_M1_counter = 0;//TIA_M1_counter_reset;
+								/*
+									0x80 = handle hand rendered graphics
+									
+									0x40 TIA_ENAM1
+									0x30 NUSIZ_M1_width
+									0x08 show first copy of current NUSIZ1
+									0x07 NUSIZ1_number
+								*/
+								Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
+								Pointer_Index_M1 |= 0x08;
+		//						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+								
+								TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
+								//TIA_M1_counter_reset = 0;
+							}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
-							
-					TIA_BL_counter++;
-					if(TIA_BL_counter == 160){
-						
-						TIA_BL_counter = TIA_BL_counter_reset;
-						/*
-							0x08 = handle hand rendered graphics
-							
-							0x04 TIA_ENABL_new or TIA_ENABL_old
-							0x03 CTRLPF_BL_width
-						*/
-						Pointer_Index_BL = CTRLPF_BL_width;
-						if(TIA_VDELBL) Pointer_Index_BL |= TIA_ENABL_old;
-						else Pointer_Index_BL |= TIA_ENABL_new;
-						
-						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
-					}
+								
+							TIA_BL_counter++;
+							if(TIA_BL_counter == 160){
+								
+								TIA_BL_counter = 0;//TIA_BL_counter_reset;
+								/*
+									0x08 = handle hand rendered graphics
+									
+									0x04 TIA_ENABL_new or TIA_ENABL_old
+									0x03 CTRLPF_BL_width
+								*/
+								Pointer_Index_BL = CTRLPF_BL_width;
+								if(TIA_VDELBL) Pointer_Index_BL |= TIA_ENABL_old;
+								else Pointer_Index_BL |= TIA_ENABL_new;
+								
+								TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
+								//TIA_BL_counter_reset = 0;
+							}
 						}
 						TIA_HMOVE_DoMove = 0;
 					}	
 		
-} // experimental hack	
-
-				}else{
+				} else {
 		
-if(!DrawHack_Blankpix){ // experimental hack
-				
 					if((LoopCount & 0x03) == 0){
 						if(TIA_Playfield_Pixels[(((LoopCount - 68) >> 2) + TIA_REFPF_Flag)] & TIA_Playfield_Bits)
 							Current_PF_Pixel = 0x01;
@@ -1426,7 +1419,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;//TIA_P0_counter_reset;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1436,19 +1429,20 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
+//						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
+						//TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;//TIA_P1_counter_reset;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1458,19 +1452,20 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
+//						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
+						//TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;//TIA_M0_counter_reset;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1480,16 +1475,17 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
+//						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
+						//TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;//TIA_M1_counter_reset;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1499,16 +1495,16 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
+						//TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -1520,18 +1516,14 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
-				DisplayPointer[posinline] = 0x1;
-				posinline+=480;
-					
+					DisplayPointer[posinline] = 0x1;
+					posinline+=480;
 				}	
+			} // end of the for loop
 
-} // experimental hack	
-
-			} // end of the foor loop
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;
-		}else{
+		}else{ // not TIA_VBLANK
 			for(CountLoop = TIA_Last_Pixel; CountLoop < ((RClock * 3) + TIA_Delayed_Write); CountLoop++){
 		 		LoopCount = CountLoop;
 				if(LoopCount > 227) LoopCount -= 228;
@@ -1590,7 +1582,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1600,19 +1592,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1622,19 +1613,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1644,16 +1634,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1663,16 +1652,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -1684,7 +1672,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 				
 					/* TODO: add support for for PAL colour loss */
@@ -1741,7 +1728,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1751,19 +1738,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1773,19 +1759,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1795,16 +1780,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1814,16 +1798,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -1835,7 +1818,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 				
 					/* TODO: add support for for PAL colour loss */
@@ -1876,7 +1858,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1886,12 +1868,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -1900,7 +1881,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -1910,12 +1891,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -1924,7 +1904,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1934,10 +1914,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -1945,7 +1924,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -1955,10 +1934,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -1966,7 +1944,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -1978,7 +1956,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
@@ -2009,7 +1986,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2019,12 +1996,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -2033,7 +2009,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2043,12 +2019,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -2057,7 +2032,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2067,10 +2042,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -2078,7 +2052,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2088,10 +2062,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -2099,7 +2072,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2111,7 +2084,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
@@ -2137,7 +2109,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2147,19 +2119,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2169,19 +2140,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2191,16 +2161,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2210,16 +2179,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2231,7 +2199,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 				
 					/* TODO: add support for for PAL colour loss */
@@ -2309,7 +2276,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2319,19 +2286,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2341,19 +2307,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2363,16 +2328,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2382,16 +2346,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2403,7 +2366,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						 
 		
@@ -2424,7 +2386,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2434,19 +2396,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2456,19 +2417,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2478,16 +2438,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2497,16 +2456,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2518,7 +2476,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						
 					}	
@@ -2531,7 +2488,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2541,12 +2498,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -2555,7 +2511,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2565,12 +2521,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -2579,7 +2534,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2589,10 +2544,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -2600,7 +2554,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2610,10 +2564,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -2621,7 +2574,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2633,7 +2586,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
@@ -2651,7 +2603,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2661,12 +2613,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -2675,7 +2626,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2685,12 +2636,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -2699,7 +2649,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2709,10 +2659,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -2720,7 +2669,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2730,10 +2679,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -2741,7 +2689,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2753,7 +2701,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
@@ -2772,7 +2719,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2782,19 +2729,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2804,19 +2750,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2826,16 +2771,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2845,16 +2789,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -2866,7 +2809,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 					
 				}	
@@ -2902,7 +2844,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					}
 				}
 
-if(!DrawHack_Blankpix){ // experimental hack
+//if(!TiaDrawHack){ // experimental hack
 
 				if(LoopCount > 75){
 					
@@ -2933,7 +2875,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2943,19 +2885,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -2965,19 +2906,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -2987,16 +2927,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3006,16 +2945,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -3027,7 +2965,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 				
 					/* TODO: add support for for PAL colour loss */
@@ -3059,7 +2996,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3069,19 +3006,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3091,19 +3027,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3113,16 +3048,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3132,16 +3066,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -3153,7 +3086,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 				
 					/* TODO: add support for for PAL colour loss */
@@ -3180,7 +3112,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3190,12 +3122,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -3204,7 +3135,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3214,12 +3145,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -3228,7 +3158,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3238,10 +3168,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -3249,7 +3178,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3259,10 +3188,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -3270,7 +3198,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -3282,7 +3210,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
@@ -3310,7 +3237,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3320,12 +3247,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 						}
@@ -3334,7 +3260,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3344,12 +3270,11 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 						}
@@ -3358,7 +3283,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3368,10 +3293,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x04){					
@@ -3379,7 +3303,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3389,10 +3313,9 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 						}
 						if(TIA_HMOVE_DoMove & 0x02){					
@@ -3400,7 +3323,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -3412,7 +3335,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 						}
 						TIA_HMOVE_DoMove = 0;
@@ -3438,7 +3360,7 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIA_P0_counter++;
 					if(TIA_P0_counter == 160){
 						
-						TIA_P0_counter = TIA_P0_counter_reset;
+						TIA_P0_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3448,19 +3370,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ0_number
 						*/
 						Pointer_Index_P0 = NUSIZ0_number | TIA_REFP0;
-						if(TIA_P0_counter_reset == 0) Pointer_Index_P0 |= 0x0008;
+						Pointer_Index_P0 |= 0x0008;
 						if(TIA_VDELP0) Pointer_Index_P0 |= TIA_GRP0_old;
 						else Pointer_Index_P0 |= TIA_GRP0_new;
 						
 						TIA_P0_Line_Pointer = TIA_P0_Table[Pointer_Index_P0];
-						TIA_P0_counter_reset = 0;
 					/* TODO: handle RESPM0 here */
 					}
 				
 					TIA_P1_counter++;
 					if(TIA_P1_counter == 160){
 						
-						TIA_P1_counter = TIA_P1_counter_reset;
+						TIA_P1_counter = 0;
 						/*
 							0x2000 = handle hand rendered graphics
 							
@@ -3470,19 +3391,18 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x0007 NUSIZ1_number
 						*/
 						Pointer_Index_P1 = NUSIZ1_number | TIA_REFP1;
-						if(TIA_P1_counter_reset == 0) Pointer_Index_P1 |= 0x0008;
+						Pointer_Index_P1 |= 0x0008;
 						if(TIA_VDELP1) Pointer_Index_P1 |= TIA_GRP1_old;
 						else Pointer_Index_P1 |= TIA_GRP1_new;
 						
 						TIA_P1_Line_Pointer = TIA_P1_Table[Pointer_Index_P1];
-						TIA_P1_counter_reset = 0;
 					/* TODO: handle RESPM1 here */
 					}
 				
 					TIA_M0_counter++;
 					if(TIA_M0_counter == 160){
 						
-						TIA_M0_counter = TIA_M0_counter_reset;
+						TIA_M0_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3492,16 +3412,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ0_number
 						*/
 						Pointer_Index_M0 = NUSIZ0_number | NUSIZ_M0_width | TIA_ENAM0;
-						if(TIA_M0_counter_reset == 0) Pointer_Index_M0 |= 0x08;
+						Pointer_Index_M0 |= 0x08;
 						
 						TIA_M0_Line_Pointer = TIA_M0_Table[Pointer_Index_M0];
-						TIA_M0_counter_reset = 0;
 					}
 				
 					TIA_M1_counter++;
 					if(TIA_M1_counter == 160){
 						
-						TIA_M1_counter = TIA_M1_counter_reset;
+						TIA_M1_counter = 0;
 						/*
 							0x80 = handle hand rendered graphics
 							
@@ -3511,16 +3430,15 @@ if(!DrawHack_Blankpix){ // experimental hack
 							0x07 NUSIZ1_number
 						*/
 						Pointer_Index_M1 = NUSIZ1_number | NUSIZ_M1_width | TIA_ENAM1;
-						if(TIA_M1_counter_reset == 0) Pointer_Index_M1 |= 0x08;
+						Pointer_Index_M1 |= 0x08;
 						
 						TIA_M1_Line_Pointer = TIA_M1_Table[Pointer_Index_M1];
-						TIA_M1_counter_reset = 0;
 					}
 				
 					TIA_BL_counter++;
 					if(TIA_BL_counter == 160){
 						
-						TIA_BL_counter = TIA_BL_counter_reset;
+						TIA_BL_counter = 0;
 						/*
 							0x08 = handle hand rendered graphics
 							
@@ -3532,7 +3450,6 @@ if(!DrawHack_Blankpix){ // experimental hack
 						else Pointer_Index_BL |= TIA_ENABL_new;
 						
 						TIA_BL_Line_Pointer = TIA_BL_Table[Pointer_Index_BL];
-						TIA_BL_counter_reset = 0;
 					}
 				
 					/* TODO: add support for for PAL colour loss */
@@ -3540,12 +3457,13 @@ if(!DrawHack_Blankpix){ // experimental hack
 					TIACollide |= TIA_Collision_Table[TIA_Pixel_State];
 					
 				}
-} // experimenta hack
+//} // experimenta hack
 	
 			}
 			TIA_Last_Pixel = (RClock * 3) + TIA_Delayed_Write;
 		}
 	}
+} // end if frameskip
 
 
 }

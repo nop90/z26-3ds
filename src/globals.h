@@ -31,8 +31,6 @@ db isN3DS;
 
 dd FrameSkip_Counter;	/* Frame skip counter */
 dd FrameSkip_Value;		/* Frame skip parameter */
-dd DrawHack_Skipcols;
-dd DrawHack_Blankpix;
 
 int	Flips;
 int	FPSflips;
@@ -105,7 +103,7 @@ FILE *parmfp;	// parameter file pointer
 #define KEYTABLESIZE 512
 
 //db KeyTable[KEYTABLESIZE];	/* event handler should tell z26 about keystrokes here */
-dw KeyTable;	/* event handler should tell z26 about keystrokes here */
+dd KeyTable;	/* event handler should tell z26 about keystrokes here */
 
 /* event handler should tell z26 about joystick states here */
 int JoystickAxis[16][6];
@@ -181,7 +179,6 @@ int UserSwapPortsFlag;		/* user specified port 0 to be swapped with port 1 */
 int SwapPortsFlag;			/* controller port 0 to be swapped with port 1 */
 
 int VideoMode;				/* default video mode */
-int FullScreen;				/* run game full screen */
 int Narrow;					/* width adjustment */
 int Tall;					/* height adjustment */
 int SimColourLoss;			/* simulate PAL colour loss *EST* */

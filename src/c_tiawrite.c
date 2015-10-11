@@ -200,7 +200,6 @@ void H_WSYNC(void){
  	// WSYNC only halts the CPU on read cycles so we handle it in cpu.m4
 }
 
-
 void H_Null(void){
 
 }
